@@ -15,33 +15,52 @@ class ProductProduct(models.Model):
     image_product = fields.Binary('Barcode Image')
 
     @api.model
-    def default_get(self,field_lst):
-        res = super(ProductProduct, self).default_get(field_lst)
-        if not self.env['res.config.settings'].search([], limit=1, order="id desc").barcode_generate:
-            res['is_barcode'] = True
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        barcode_generate = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("cap.barcode_generate")
+        )
+        if not barcode_generate:
+            res["is_barcode"] = True
         return res
 
     @api.model
     def create(self, vals):
-        res = super(ProductProduct, self).create(vals)
-        for val in vals:
-            if not val.get('barcode') and self.env['res.config.settings'].sudo().search([], limit=1,
-                                                                                         order="id desc").barcode_generate:
-                if self.env['res.config.settings'].search([], limit=1, order="id desc").option_generated == 'date':
-                    barcode_str = self.env['barcode.nomenclature'].sanitize_ean(
-                        "%s%s" % (res.id, datetime.now().strftime("%d%m%y%H%M")))
-                else:
-                    number_random = int("%0.13d" % random.randint(0, 999999999999))
-                    barcode_str = self.env['barcode.nomenclature'].sanitize_ean("%s" % (number_random))
-                # Create a barcode image
-                ean = EAN13(barcode_str, writer=ImageWriter())
-                image = ean.render()
-                # Convert the image to base64
-                image_buffer = BytesIO()
-                image.save(image_buffer, format="PNG")
-                res.barcode = barcode_str
-                image_data = base64.b64encode(image_buffer.getvalue()).decode('utf-8')
-                res.image_product = image_data
+        res = super().create(vals)
+
+        barcode_generate = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("cap.barcode_generate")
+        )
+        option_generated = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("cap.option_generated", default="date")
+        )
+
+        if barcode_generate and not res.barcode:
+            if option_generated == "date":
+                barcode_str = self.env["barcode.nomenclature"].sanitize_ean(
+                    "%s%s" % (res.id, datetime.now().strftime("%d%m%y%H%M"))
+                )
+            else:
+                number_random = int("%0.13d" % random.randint(0, 999999999999))
+                barcode_str = self.env["barcode.nomenclature"].sanitize_ean(str(number_random))
+
+            ean = EAN13(barcode_str, writer=ImageWriter())
+            image = ean.render()
+
+            buffer = BytesIO()
+            image.save(buffer, format="PNG")
+
+            res.write({
+                "barcode": barcode_str,
+                "image_product": base64.b64encode(buffer.getvalue()),
+            })
+
         return res
 
 
