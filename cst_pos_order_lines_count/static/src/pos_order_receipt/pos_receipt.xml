@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="pos_orderline_items_count.OrderReceipt"
+       t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'pos-receipt-amount')]" position="before">
+            <div class="items-count" style="display: flex; border-top: 2px solid #ccc; padding: 6px 0;margin-top:4px;">
+                <div style="flex: 1; text-align: center; border-right: 1px solid #ccc;">
+                    <div style="font-size: 0.8rem; color: #666;">Total Items</div>
+                    <div style="font-weight: bold; font-size: 1rem;">
+                        <t t-esc="order.itemCount"/>
+                    </div>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <div style="font-size: 0.8rem; color: #666;">Total Quantity</div>
+                    <div style="font-weight: bold; font-size: 1rem;">
+                        <t t-esc="order.totalQuantity"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>
