@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//div[@class='paymentlines text-start pt-1']" position="replace">
+            <table class="paymentlines-table" style="width: 100%; border-collapse: collapse; margin: 5px 0; font-size: 12px; line-height: 1.1;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 3px 5px; font-weight: bold; width: 25%;">Type</th>
+                        <th style="text-align: left; padding: 3px 5px; font-weight: bold; width: 45%;">Foreign Currency</th>
+                        <th style="text-align: right; padding: 3px 5px; font-weight: bold; width: 30%;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="paymentLines" t-as="line" t-key="line_index">
+                        <td style="padding: 3px 5px; vertical-align: top; line-height: 1.1;">
+                            <t t-esc="line.payment_method_id.name"/>
+                        </td>
+                        <td style="padding: 3px 5px; vertical-align: top; color: #666; line-height: 1.1;">
+                            <t t-if="line.selected_currency_symbol and line.currency_amount_total">
+                                (<t t-esc="line.selected_currency_symbol"/><t t-esc="line.currency_amount_total"/>)
+                            </t>
+                            <t t-else="">
+                                (<span t-esc="formatCurrency(line.getAmount())"/>)
+                            </t>
+                        </td>
+                        <td style="padding: 3px 5px; text-align: right; vertical-align: top; line-height: 1.1;">
+                            <span t-esc="formatCurrency(line.getAmount())"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </xpath>
+    </t>
+</templates>

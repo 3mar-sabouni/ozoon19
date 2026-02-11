@@ -1,0 +1,12 @@
+/* ensure summary behaves as a full-width flex element in case theme overrides it */
+.pos-popup .currency-employee-breakdown details > summary {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+}
+
+/* restore default triangle/marker if it's hidden by theme */
+.pos-popup .currency-employee-breakdown details > summary::-webkit-details-marker { display: inline-block; }

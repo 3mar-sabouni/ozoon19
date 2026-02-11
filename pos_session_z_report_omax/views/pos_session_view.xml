@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <record id="res_config_settings_view_form_session_z_report_omax" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.session.z.report</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"></field>
+        <field name="arch" type="xml">
+            <!--xpath expr="//div[@id='auto_printing']" position='inside'-->
+            <xpath expr="//block[@id='pos_bills_and_receipts_section']" position='inside'>
+                <setting id="omax_session_z_report" help="This will allow to print Session Z Report directly from POS screen.">
+                    <field name="omax_session_z_report"/>
+                </setting>
+                
+            </xpath>
+        </field>
+    </record>
+
+	<record id="view_pos_session_form_report_button" model="ir.ui.view">
+        <field name="name">pos.session.form.view.session.button</field>
+        <field name="model">pos.session</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_session_form"></field>
+        <field name="arch" type="xml">
+        	<xpath expr="//header/button[@name='action_pos_session_closing_control']" position='after'>
+                <button name="action_session_z_report" type="object" string="Session Z Report" class="oe_highlight"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
