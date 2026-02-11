@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <t t-name="3s_pos_exchange.ExchangePopup">
+    <Dialog size="'md'">
+      <t t-set-slot="header">
+        <h4 class="modal-title">Exchange Items</h4>
+      </t>
+
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th class="text-center">Qty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr t-foreach="state.lines" t-as="l" t-key="l.uuid">
+              <td t-esc="l.product"/>
+              <td style="width:120px">
+                <input type="number"
+                       class="form-control"
+                       min="0"
+                       t-att-max="l.maxQty"
+                       t-model.number="l.qty"/>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <t t-set-slot="footer">
+        <button class="btn btn-secondary" t-on-click="cancel">Cancel</button>
+        <button class="btn btn-primary" t-on-click="confirm">Confirm</button>
+      </t>
+    </Dialog>
+  </t>
+
+</templates>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+  <t t-name="3s_pos_exchange.ExchangeScreen">
+    <div class="screen h-100 bg-100">
+
+      <div class="p-2">
+        <button class="btn btn-secondary btn-lg" t-on-click="back">BACK</button>
+      </div>
+
+      <div class="content p-3">
+
+        <t t-if="state.selectedOrder">
+          <div class="card mb-4 p-3">
+            <h3 class="mb-2">Order Details</h3>
+
+            <div class="row mb-2">
+              <div class="col-3">
+                <strong>Order</strong><br/>
+                <t t-esc="state.selectedOrder.name"/>
+              </div>
+              <div class="col-3">
+                <strong>Receipt</strong><br/>
+                <t t-esc="state.selectedOrder.pos_reference"/>
+              </div>
+              <div class="col-3">
+                <strong>Customer</strong><br/>
+                <t t-esc="state.selectedOrder.partner"/>
+              </div>
+              <div class="col-3">
+                <strong>Date</strong><br/>
+                <t t-esc="state.selectedOrder.date_order"/>
+              </div>
+            </div>
+
+            <table class="table table-bordered mt-3">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th class="text-center">Qty</th>
+                  <th class="text-end">Unit Price</th>
+                  <th class="text-end">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr t-foreach="state.selectedOrder.lines" t-as="line" t-key="line.product">
+                  <td t-esc="line.product"/>
+                  <td class="text-center" t-esc="line.qty"/>
+                  <td class="text-end" t-esc="line.price_unit"/>
+                  <td class="text-end" t-esc="line.subtotal"/>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="text-end mt-2">
+              <h4>Total: <span t-esc="state.selectedOrder.total"/></h4>
+            </div>
+
+            <div class="mt-3">
+              <strong>Payments</strong>
+              <ul>
+                <li t-foreach="state.selectedOrder.payments" t-as="pay" t-key="pay.method">
+                  <t t-esc="pay.method"/> — <t t-esc="pay.amount"/>
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-3">
+              <button class="btn btn-success" t-on-click="confirmExchange">
+                Exchange
+              </button>
+            </div>
+          </div>
+        </t>
+
+        <div class="card p-3">
+          <h3 class="mb-2">Orders</h3>
+
+          <t t-if="state.loading">
+            <p>Loading orders...</p>
+          </t>
+
+          <t t-else="">
+            <div class="mb-2">
+              <input class="form-control"
+                     placeholder="Search by receipt number..."
+                     t-on-input="onLiveSearch"/>
+            </div>
+
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Receipt</th>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr t-foreach="state.filteredOrders"
+                    t-as="order"
+                    t-key="order.id"
+                    t-on-click="() => this.selectOrder(order)">
+                  <td t-esc="order.pos_reference"/>
+                  <td t-esc="order.name"/>
+                  <td t-esc="order.partner"/>
+                  <td t-esc="order.date_order"/>
+                </tr>
+              </tbody>
+            </table>
+          </t>
+        </div>
+
+      </div>
+    </div>
+  </t>
+
+</templates>
