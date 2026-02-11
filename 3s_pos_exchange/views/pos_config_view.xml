@@ -1,41 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="pos_config_view_form_multi_currency" model="ir.ui.view">
-        <field name="name">pos.config.form.multi.currency</field>
-        <field name="model">pos.config</field>
-        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
-        <field name="arch" type="xml">
+    <record id="pos_config_view_form_exchange_days" model="ir.ui.view">
+    <field name="name">pos.config.form.exchange.days</field>
+    <field name="model">pos.config</field>
+    <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+    <field name="arch" type="xml">
 
-            <!-- Insert after "Other Devices" -->
-            <xpath expr="//setting[@id='other_devices']" position="after">
+        <!-- Insert right after ePos Printer setting -->
+        <xpath expr="//setting[@id='other_devices']" position="after">
+            <setting
+                string="Exchange / Refund Order History"
+                help="Limit the number of past days for which paid orders are available for exchange or refund.">
 
-                <setting id="multi_currency_payment"
-                         string="Multi Currency Payments"
-                         help="Allow customers to pay using foreign currencies.">
+                <field name="exchange_order_days" readonly="has_active_session"/>
 
-                    <!-- Toggle -->
-                    <field name="enable_multicurrency"/>
-
-                    <!-- Extra content -->
-                    <div class="content-group mt16"
-                         attrs="{'invisible': [('enable_multicurrency', '=', False)]}">
-
-                        <field name="currency_ids"
-                               widget="many2many_tags"
-                               placeholder="Select allowed currencies"/>
-
-                        <div class="text-muted mt8">
-                            These currencies will be available in the POS payment screen.
-                        </div>
-
+                <div class="content-group mt16">
+                    <div class="text-muted">
+                        Only paid orders from the last <b>X</b> days will be available in the exchange screen.
                     </div>
+                </div>
+            </setting>
+        </xpath>
 
-                </setting>
+    </field>
+</record>
 
-            </xpath>
-
-        </field>
-    </record>
 
 </odoo>
