@@ -5,7 +5,7 @@ class PosOrder(models.Model):
     _inherit = "pos.order"
 
     @api.model
-    def search_paid_order_ids(self, config_id, domain=None, limit=100, offset=0):
+    def search_paid_order_ids(self, config_id, domain=None, limit=2000, offset=0):
         domain = domain or []
 
         date_from = fields.Datetime.now() - timedelta(days=14)
