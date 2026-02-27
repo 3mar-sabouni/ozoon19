@@ -11,7 +11,7 @@ class PosOrder(models.Model):
         date_from = fields.Datetime.now() - timedelta(days=14)
 
         domain.append(("date_order", ">=", date_from))
-
+        limit = 2000
         return super().search_paid_order_ids(
             config_id=config_id,
             domain=domain,
