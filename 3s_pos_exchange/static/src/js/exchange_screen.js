@@ -28,58 +28,10 @@ export class ExchangeScreen extends Component {
 
         onWillStart(async () => {
             await this.pos.ready;
-            await this.loadPaidOrders();
-            this.applySearch();
             this.state.loading = false;
         });
     }
 
-    // =================================================
-    // LOAD PAID ORDERS (ONLINE / OFFLINE SAFE)
-    // =================================================
-    async loadPaidOrders() {
-        try {
-            const config_id = this.pos.config.id;
-            const { ordersInfo } = await this.pos.data.call(
-                "pos.order",
-                "search_paid_order_ids",
-                [],
-                { config_id, domain: [], limit: 100, offset: 0 }
-            );
-
-            const ids = ordersInfo.map((o) => o[0]);
-            if (ids.length) {
-                await this.pos.data.loadServerOrders([["id", "in", ids]]);
-            }
-
-            this.state.orders = this.pos.models["pos.order"].filter(
-                (o) => o.finalized && o.uiState?.displayed
-            );
-        } catch (err) {
-            if (err instanceof ConnectionLostError) {
-                this.state.orders = this.pos.models["pos.order"].filter(
-                    (o) => o.finalized && o.uiState?.displayed
-                );
-            } else {
-                throw err;
-            }
-        }
-    }
-
-    // =================================================
-    // SEARCH (RECEIPT ONLY)
-    // =================================================
-    applySearch() {
-        const term = (this.state.searchTerm || "").trim();
-        this.state.filteredOrders = !term
-            ? this.state.orders
-            : this.state.orders.filter((o) => (o.pos_reference || "").includes(term));
-    }
-
-    onLiveSearch(ev) {
-        this.state.searchTerm = ev.target.value;
-        this.applySearch();
-    }
 
     // =================================================
     // SELECT ORDER
@@ -207,6 +159,70 @@ export class ExchangeScreen extends Component {
 
         // 6) Go to Product Screen
         this.pos.navigate("ProductScreen", { orderUuid: exchangeOrder.uuid });
+    }
+
+    async searchOrders(reset = true) {
+        const term = (this.state.searchTerm || "").trim();
+        if (!term) return;
+
+        if (reset) {
+            this.state.offset = 0;
+            this.state.filteredOrders = [];
+            this.state.hasMore = true;
+        }
+
+        if (!this.state.hasMore) return;
+
+        this.state.loading = true;
+
+        try {
+            const config_id = this.pos.config.id;
+
+            const { ordersInfo } = await this.pos.data.call(
+                "pos.order",
+                "search_paid_order_ids",
+                [],
+                {
+                    config_id,
+                    domain: [["pos_reference", "ilike", term]],
+                    limit: this.state.limit,
+                    offset: this.state.offset,
+                }
+            );
+
+            const ids = ordersInfo.map((o) => o[0]);
+
+            if (ids.length) {
+                await this.pos.data.loadServerOrders([["id", "in", ids]]);
+            }
+
+            const newOrders = this.pos.models["pos.order"].filter((o) =>
+                ids.includes(o.id)
+            );
+
+            this.state.filteredOrders.push(...newOrders);
+
+            this.state.offset += this.state.limit;
+
+            if (ids.length < this.state.limit) {
+                this.state.hasMore = false;
+            }
+
+        } catch (err) {
+            if (!(err instanceof ConnectionLostError)) {
+                throw err;
+            }
+        }
+
+        this.state.loading = false;
+    }
+
+    onInput(ev) {
+        this.state.searchTerm = ev.target.value;
+    }
+
+    onSearchClick() {
+        this.searchOrders();
     }
 }
 

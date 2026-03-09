@@ -20,6 +20,7 @@ within the Odoo Point of Sale interface.
             "3s_pos_exchange/static/src/js/exchange_button.js",
             "3s_pos_exchange/static/src/js/exchange_screen.js",
             "3s_pos_exchange/static/src/js/exchange_popup.js",
+           # "3s_pos_exchange/static/src/js/pos_auto_global_discount.js",
             "3s_pos_exchange/static/src/xml/exchange_button.xml",
             "3s_pos_exchange/static/src/xml/exchange_screen.xml",
             "3s_pos_exchange/static/src/xml/exchange_popup.xml",

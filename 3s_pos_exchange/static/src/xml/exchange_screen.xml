@@ -82,9 +82,18 @@
 
           <t t-else="">
             <div class="mb-2">
-              <input class="form-control"
-                     placeholder="Search by receipt number..."
-                     t-on-input="onLiveSearch"/>
+              <div class="d-flex gap-2 mb-2">
+
+                  <input class="form-control"
+                        placeholder="Search receipt..."
+                        t-on-input="onInput"/>
+
+                  <button class="btn btn-primary"
+                          t-on-click="onSearchClick">
+                      Search
+                  </button>
+
+              </div>
             </div>
 
             <table class="table table-hover">
