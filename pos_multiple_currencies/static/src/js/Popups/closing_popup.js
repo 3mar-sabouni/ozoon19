@@ -48,7 +48,7 @@ patch(ClosePosPopup.prototype, {
 
                 // 🔹 remove $ payment method so it doesn't affect difference
                 this.props.non_cash_payment_methods =
-                    nonCash.filter(pm => !pm.name?.includes("$"));
+                    nonCash.filter(pm => !pm.name?.includes("$")|| pm.type === "bank" || pm.type === "card");
             }
         }
 
