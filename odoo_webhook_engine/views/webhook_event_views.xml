@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK EVENT — Views + Action (for Config menu)
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_event_list_view" model="ir.ui.view">
+            <field name="name">webhook.event.list</field>
+            <field name="model">webhook.event</field>
+            <field name="arch" type="xml">
+                  <list string="Webhook Event Types" editable="bottom">
+                        <field name="sequence" widget="handle" />
+                        <field name="name" />
+                        <field name="code" />
+                        <field name="description" />
+                        <field name="active" />
+                  </list>
+            </field>
+      </record>
+
+      <record id="webhook_event_action" model="ir.actions.act_window">
+            <field name="name">Event Types</field>
+            <field name="res_model">webhook.event</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                        Define Webhook Event Types
+                  </p>
+            </field>
+      </record>
+
+</odoo>

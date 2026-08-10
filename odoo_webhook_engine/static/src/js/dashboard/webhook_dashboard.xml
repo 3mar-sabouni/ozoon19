@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="odoo_webhook_engine.WebhookDashboard">
+    <div class="o_webhook_dashboard">
+
+                  <!-- Header -->
+        <div class="o_webhook_dashboard_header">
+            <div class="d-flex justify-content-between align-items-center p-3">
+                <h2 class="mb-0">🔗 Webhook Event Engine</h2>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary btn-sm" t-on-click="onRefresh">
+                        🔄 Refresh
+                    </button>
+                    <button class="btn btn-primary btn-sm" t-on-click="onOpenRules">
+                        ⚡ Webhook Rules
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" t-on-click="onOpenLogs">
+                        📋 Delivery Logs
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" t-on-click="onOpenDLQ">
+                        ☠️ Dead-Letter Queue
+                    </button>
+                    <button class="btn btn-outline-info btn-sm" t-on-click="onOpenIncoming">
+                        📥 Incoming
+                    </button>
+                </div>
+            </div>
+        </div>
+
+                  <!-- Loading spinner -->
+        <div t-if="state.loading" class="text-center p-5">
+            <div class="spinner-border text-primary" role="status"/>
+            <p class="mt-2 text-muted">Loading webhook analytics...</p>
+        </div>
+
+        <div t-else="" class="o_webhook_dashboard_content p-3">
+
+                        <!-- ═══════════════════════════════════════════
+                 SUMMARY CARDS
+                 ═══════════════════════════════════════════ -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-2">
+                    <div class="card o_wh_card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-1">Total Sent</h6>
+                            <h3 class="text-primary mb-0" t-out="formatNumber(state.summary.total_sent)"/>
+                            <small class="text-muted">Last 30 days</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card o_wh_card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-1">✅ Success</h6>
+                            <h3 class="text-success mb-0" t-out="formatNumber(state.summary.success_count)"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card o_wh_card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-1">❌ Failed</h6>
+                            <h3 class="text-danger mb-0" t-out="formatNumber(state.summary.failed_count)"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card o_wh_card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-1">📊 Success Rate</h6>
+                            <h3 t-att-class="getSuccessRateColor() + ' mb-0'" t-out="getSuccessRate()"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card o_wh_card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-1">⏱️ Avg Response</h6>
+                            <h3 class="text-warning mb-0" t-out="formatMs(state.summary.avg_response_time)"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card o_wh_card text-center shadow-sm">
+                        <div class="card-body">
+                            <h6 class="text-muted mb-1">⚡ Active Rules</h6>
+                            <h3 class="text-info mb-0" t-out="formatNumber(state.summary.active_rules)"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Pending / DLQ alert bar -->
+            <div t-if="state.summary.pending_count > 0 || state.summary.dlq_count > 0"
+                 class="row g-3 mb-3">
+                <div class="col-md-6" t-if="state.summary.pending_count > 0">
+                    <div class="alert alert-warning mb-0 d-flex align-items-center gap-2">
+                        <span>🔄</span>
+                        <strong t-out="state.summary.pending_count"/> deliveries pending retry
+                    </div>
+                </div>
+                <div class="col-md-6" t-if="state.summary.dlq_count > 0">
+                    <div class="alert alert-danger mb-0 d-flex align-items-center gap-2 cursor-pointer"
+                         t-on-click="onOpenDLQ">
+                        <span>☠️</span>
+                        <strong t-out="state.summary.dlq_count"/> items in dead-letter queue
+                    </div>
+                </div>
+            </div>
+
+                        <!-- ═══════════════════════════════════════════
+                 CHARTS ROW
+                 ═══════════════════════════════════════════ -->
+            <div class="row g-3 mb-3">
+
+                              <!-- Daily Traffic Chart -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-white fw-bold">📈 Daily Webhook Traffic (30 days)</div>
+                        <div class="card-body">
+                            <div class="o_wh_bar_chart d-flex align-items-end gap-1"
+                                 style="height: 200px; overflow-x: auto;">
+                                <t t-foreach="state.dailyStats" t-as="day" t-key="day.date">
+                                    <div class="o_wh_bar_group d-flex flex-column align-items-center"
+                                         style="min-width: 18px;">
+                                        <div t-attf-class="o_wh_bar {{ getBarColor(day) }} rounded-top"
+                                             t-attf-style="height: {{ getBarHeight(day.calls) }}%; width: 14px;"
+                                             t-att-title="day.date + ': ' + (day.calls || 0) + ' calls (' + (day.success || 0) + ' ok, ' + (day.failed || 0) + ' fail)'"/>
+                                        <small class="text-muted mt-1"
+                                               style="font-size: 9px; writing-mode: vertical-lr; transform: rotate(180deg);"
+                                               t-out="day.date ? day.date.slice(5) : ''"/>
+                                    </div>
+                                </t>
+                            </div>
+                            <div t-if="!state.dailyStats.length" class="text-center text-muted p-4">
+                                No traffic data yet. Configure a webhook rule to get started.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                              <!-- Events by Type -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-white fw-bold">📊 Events by Type</div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead>
+                                    <tr><th>Event</th><th class="text-end">Count</th></tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.eventsByType" t-as="ev" t-key="ev.event">
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-primary me-1" t-out="ev.event"/>
+                                            </td>
+                                            <td class="text-end" t-out="formatNumber(ev.count)"/>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <div t-if="!state.eventsByType.length" class="text-center text-muted p-3">
+                                No events yet
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- ═══════════════════════════════════════════
+                 TABLES ROW
+                 ═══════════════════════════════════════════ -->
+            <div class="row g-3">
+
+                              <!-- Top Endpoints -->
+                <div class="col-lg-7">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white fw-bold">🔥 Top Endpoints</div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Target URL</th>
+                                        <th class="text-end">Calls</th>
+                                        <th class="text-end">Avg Time</th>
+                                        <th class="text-end">Success %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.topEndpoints" t-as="ep" t-key="ep.url">
+                                        <tr>
+                                            <td><code class="text-truncate d-inline-block" style="max-width: 300px;" t-out="ep.url"/></td>
+                                            <td class="text-end" t-out="formatNumber(ep.calls)"/>
+                                            <td class="text-end" t-out="formatMs(ep.avg_time)"/>
+                                            <td class="text-end" t-out="formatPercent(ep.success_rate)"/>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <div t-if="!state.topEndpoints.length" class="text-center text-muted p-3">
+                                No endpoint data yet
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                              <!-- Events per Model -->
+                <div class="col-lg-5">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white fw-bold">📦 Events per Model</div>
+                        <div class="card-body">
+                            <t t-foreach="state.eventsPerModel" t-as="m" t-key="m.model">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="text-truncate me-2" style="min-width: 120px; font-size: 13px;">
+                                        <code t-out="m.model"/>
+                                    </span>
+                                    <div class="flex-grow-1">
+                                        <div class="progress" style="height: 18px;">
+                                            <div class="progress-bar bg-info"
+                                                 role="progressbar"
+                                                 t-attf-style="width: {{ getModelBarWidth(m.count) }}%">
+                                                <small t-out="m.count"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                            <div t-if="!state.eventsPerModel.length" class="text-center text-muted p-3">
+                                No model data yet
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Odoo Webhook Engine</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+      <!-- Header Section -->
+      <div class="bg-primary text-white py-5 mb-5">
+            <div class="container">
+                  <h1 class="display-4 fw-bold mb-3">Odoo Webhook Engine</h1>
+                  <p class="lead fs-5">Enterprise-Grade Event-Driven Integration Framework for Odoo</p>
+                  <div class="mt-4">
+                        <span class="badge bg-warning text-dark fs-6">Version 1.0.0</span>
+                  </div>
+            </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="container bg-white rounded-3 shadow-sm p-5 mb-5">
+
+            <!-- Overview Section -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Overview</h2>
+                  <p class="fs-5 lh-lg text-secondary">
+                        The Odoo Webhook Engine is a comprehensive event-driven integration framework that enables
+                        real-time
+                        communication between Odoo and external systems. It provides a robust infrastructure for
+                        triggering
+                        webhooks on model events, managing payload transformations, handling retries, and maintaining
+                        detailed
+                        audit logs for all webhook operations.
+                  </p>
+            </section>
+
+            <!-- Key Features Section -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Key Features
+                  </h2>
+                  <div class="mb-4">
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Event-Driven Webhook Rules</h5>
+                              <p class="text-secondary mb-0">Create flexible webhook rules that trigger on create,
+                                    write, unlink, and custom model events. Filter by field changes and conditions.</p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Real-Time Event Dispatching</h5>
+                              <p class="text-secondary mb-0">Dispatch webhooks synchronously or asynchronously with
+                                    configurable retry policies, exponential backoff, and dead-letter queue handling.
+                              </p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Advanced Payload Building</h5>
+                              <p class="text-secondary mb-0">Dynamically construct webhook payloads with field
+                                    selection, transformations, computed values, nested relations, and custom hooks.</p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Request Signature Verification</h5>
+                              <p class="text-secondary mb-0">HMAC-SHA256 signature generation and verification for
+                                    webhook authenticity. Secure payload delivery with cryptographic verification.</p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Comprehensive Webhook Logging</h5>
+                              <p class="text-secondary mb-0">Full audit trail of webhook requests, responses, execution
+                                    times, status codes, and error details for troubleshooting.</p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Incoming Webhook Support</h5>
+                              <p class="text-secondary mb-0">Receive and process webhooks from external systems with
+                                    signature verification, payload parsing, and custom action handlers.</p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Intelligent Retry Mechanism</h5>
+                              <p class="text-secondary mb-0">Automatic retry queue with exponential backoff,
+                                    configurable intervals, and dead-letter queue for permanently failed webhooks.</p>
+                        </div>
+                        <div class="border-start border-4 border-warning bg-light p-4 rounded-2">
+                              <h5 class="fw-bold text-dark mb-2">Analytics Dashboard</h5>
+                              <p class="text-secondary mb-0">Real-time webhook analytics showing success rates, endpoint
+                                    performance, daily traffic, event distribution, and error tracking.</p>
+                        </div>
+                  </div>
+            </section>
+
+            <!-- Statistics -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Module
+                        Statistics</h2>
+                  <div class="row g-3 mb-4">
+                        <div class="col-md-6 col-lg-3">
+                              <div class="card border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                          <h3 class="card-title text-warning fw-bold">8</h3>
+                                          <p class="card-text text-secondary">Core Models</p>
+                                    </div>
+                              </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                              <div class="card border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                          <h3 class="card-title text-warning fw-bold">3</h3>
+                                          <p class="card-text text-secondary">Service Modules</p>
+                                    </div>
+                              </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                              <div class="card border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                          <h3 class="card-title text-warning fw-bold">2</h3>
+                                          <p class="card-text text-secondary">Controllers</p>
+                                    </div>
+                              </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                              <div class="card border-0 shadow-sm text-center">
+                                    <div class="card-body">
+                                          <h3 class="card-title text-warning fw-bold">6</h3>
+                                          <p class="card-text text-secondary">View Types</p>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            </section>
+
+            <!-- Core Models Section -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Core Data Models
+                  </h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Rule (webhook.rule)</h5>
+                        <p class="text-secondary mb-3">Defines event-triggered webhook configurations and routing.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Name and Description</li>
+                              <li class="mb-2">• Model Selection (which model triggers the webhook)</li>
+                              <li class="mb-2">• Event Triggers (create, write, unlink, custom events)</li>
+                              <li class="mb-2">• Target Webhook URL</li>
+                              <li class="mb-2">• Payload Configuration and Field Selection</li>
+                              <li class="mb-2">• Authentication Method (Basic Auth, Bearer Token, API Key)</li>
+                              <li class="mb-2">• HTTP Method (GET, POST, PUT, PATCH, DELETE)</li>
+                              <li class="mb-2">• Custom Headers Support</li>
+                              <li class="mb-2">• Active/Inactive Status</li>
+                              <li class="mb-2">• Test Mode for Development</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Log (webhook.log)</h5>
+                        <p class="text-secondary mb-3">Comprehensive audit trail for all webhook dispatches.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Rule Reference and Name</li>
+                              <li class="mb-2">• Model and Record Information</li>
+                              <li class="mb-2">• Event Code</li>
+                              <li class="mb-2">• Target URL and HTTP Method</li>
+                              <li class="mb-2">• Request Headers and Payload</li>
+                              <li class="mb-2">• Response Status Code and Body</li>
+                              <li class="mb-2">• Response Headers</li>
+                              <li class="mb-2">• Execution Time (milliseconds)</li>
+                              <li class="mb-2">• Status (success, failed, pending, test)</li>
+                              <li class="mb-2">• Error Messages</li>
+                              <li class="mb-2">• Retry Information</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Retry (webhook.retry)</h5>
+                        <p class="text-secondary mb-3">Dead-letter queue and retry management for failed webhooks.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Reference to Failed Log Entry</li>
+                              <li class="mb-2">• Retry State (pending, retrying, exhausted, succeeded)</li>
+                              <li class="mb-2">• Attempt Count and Maximum Retries</li>
+                              <li class="mb-2">• Next Retry Schedule</li>
+                              <li class="mb-2">• Exponential Backoff Configuration</li>
+                              <li class="mb-2">• Last Error Message</li>
+                              <li class="mb-2">• Manual Retry Action</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Event (webhook.event)</h5>
+                        <p class="text-secondary mb-3">Event configuration and mapping for custom triggers.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Event Code (create, write, unlink, custom)</li>
+                              <li class="mb-2">• Model Mapping</li>
+                              <li class="mb-2">• Event Description</li>
+                              <li class="mb-2">• Standard vs Custom Events</li>
+                              <li class="mb-2">• Active Status</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Payload Field (webhook.payload.field)</h5>
+                        <p class="text-secondary mb-3">Field-level payload configuration for dynamic payload building.
+                        </p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Field Name Selection</li>
+                              <li class="mb-2">• Field Type (char, integer, float, date, datetime, etc.)</li>
+                              <li class="mb-2">• Custom Field Name in Payload</li>
+                              <li class="mb-2">• Include in Payload Toggle</li>
+                              <li class="mb-2">• Transformation Functions</li>
+                              <li class="mb-2">• Default Values</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">IR Model Hook (ir.model.hook)</h5>
+                        <p class="text-secondary mb-3">Model-level event hook configuration.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Model Reference</li>
+                              <li class="mb-2">• Event Type Mapping</li>
+                              <li class="mb-2">• Hook Active Status</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Incoming (webhook.incoming)</h5>
+                        <p class="text-secondary mb-3">Receive and process inbound webhooks from external systems.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Webhook Payload Storage</li>
+                              <li class="mb-2">• Source Identification</li>
+                              <li class="mb-2">• Signature Verification Status</li>
+                              <li class="mb-2">• Processing State</li>
+                              <li class="mb-2">• Custom Action Handlers</li>
+                              <li class="mb-2">• Error Tracking</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Event History</h5>
+                        <p class="text-secondary mb-3">Event tracking and analytics data.</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Event Timestamp</li>
+                              <li class="mb-2">• Model and Record Reference</li>
+                              <li class="mb-2">• Event Type</li>
+                              <li class="mb-2">• Triggered Rules Count</li>
+                              <li class="mb-2">• Success/Failure Statistics</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Service Architecture -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Service
+                        Architecture</h2>
+                  <p class="text-secondary mb-4">
+                        The webhook engine uses a modular service-oriented architecture with three primary components:
+                  </p>
+                  <div class="table-responsive">
+                        <table class="table table-hover table-bordered text-secondary">
+                              <thead class="table-primary text-white">
+                                    <tr>
+                                          <th class="fw-bold">Service</th>
+                                          <th class="fw-bold">Responsibility</th>
+                                          <th class="fw-bold">Key Functions</th>
+                                    </tr>
+                              </thead>
+                              <tbody>
+                                    <tr>
+                                          <td class="fw-bold">Dispatcher</td>
+                                          <td>Main event dispatcher and webhook execution engine</td>
+                                          <td>dispatch_event(), retry_single(), async_dispatch(), handle_event()</td>
+                                    </tr>
+                                    <tr>
+                                          <td class="fw-bold">Payload Builder</td>
+                                          <td>Dynamic payload construction and field transformation</td>
+                                          <td>build_payload(), apply_transformations(), nest_relations(),
+                                                compute_fields()</td>
+                                    </tr>
+                                    <tr>
+                                          <td class="fw-bold">Signature Manager</td>
+                                          <td>HMAC-SHA256 signature generation and verification</td>
+                                          <td>generate_signature(), verify_signature(), secret_key_management()</td>
+                                    </tr>
+                              </tbody>
+                        </table>
+                  </div>
+            </section>
+
+            <!-- Controllers and Endpoints -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Controllers and
+                        API Endpoints</h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Incoming Webhook Controller</h5>
+                        <p class="text-secondary mb-3">Receives and processes inbound webhooks from external systems</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• POST /webhook/incoming - Receive webhook payload</li>
+                              <li class="mb-2">• Signature verification for authenticity</li>
+                              <li class="mb-2">• Payload parsing and validation</li>
+                              <li class="mb-2">• Custom event handler routing</li>
+                              <li class="mb-2">• Error handling and logging</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Dashboard Controller</h5>
+                        <p class="text-secondary mb-3">Provides webhook analytics and monitoring data</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• GET /webhook/dashboard/data - Retrieve dashboard metrics</li>
+                              <li class="mb-2">• Summary statistics (total_sent, success_count, failed_count)</li>
+                              <li class="mb-2">• Top endpoints performance data</li>
+                              <li class="mb-2">• Events per model breakdown</li>
+                              <li class="mb-2">• Daily traffic statistics</li>
+                              <li class="mb-2">• Event type distribution</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Data Files and Configuration -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Data Files and
+                        Configuration</h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Event Data (webhook_event_data.xml)</h5>
+                        <p class="text-secondary mb-3">Provides default event configurations on module installation:</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Standard event types (create, write, unlink)</li>
+                              <li class="mb-2">• Common models mapping</li>
+                              <li class="mb-2">• Pre-configured event templates</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Scheduled Jobs (cron.xml)</h5>
+                        <p class="text-secondary mb-3">Automated webhook maintenance and cleanup tasks:</p>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Hourly retry job for failed webhooks</li>
+                              <li class="mb-2">• Daily log cleanup (old success logs)</li>
+                              <li class="mb-2">• Dead-letter queue processing</li>
+                              <li class="mb-2">• Performance metrics computation</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Views and UI -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">User Interface
+                        Components</h2>
+
+                  <div class="alert alert-info border-start border-5 mb-3" role="alert">
+                        <strong>Webhook Rules Management:</strong> Create, configure, and manage webhook rules with
+                        visual form builder, model selection, event chooser, and authentication setup.
+                  </div>
+                  <div class="alert alert-success border-start border-5 mb-3" role="alert">
+                        <strong>Webhook Logs Viewer:</strong> Browse complete webhook dispatch logs with filtering by
+                        status, rule, model, and date range for troubleshooting.
+                  </div>
+                  <div class="alert alert-warning border-start border-5 mb-3" role="alert">
+                        <strong>Retry Queue Management:</strong> Monitor and manually manage failed webhooks in the
+                        dead-letter queue with retry actions.
+                  </div>
+                  <div class="alert alert-primary border-start border-5 mb-3" role="alert">
+                        <strong>Event Configuration:</strong> Define custom webhook events and model-level event hooks
+                        with active/inactive control.
+                  </div>
+                  <div class="alert alert-success border-start border-5 mb-3" role="alert">
+                        <strong>Incoming Webhooks:</strong> View received inbound webhooks with payload inspection,
+                        signature verification status, and processing state.
+                  </div>
+                  <div class="alert alert-danger border-start border-5" role="alert">
+                        <strong>Analytics Dashboard:</strong> Real-time webhook metrics with success rates, endpoint
+                        performance, daily trends, and error tracking.
+                  </div>
+            </section>
+
+            <!-- Webhook Operations -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Webhook
+                        Operations and Flow</h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Outbound Webhook Flow</h5>
+                        <ol class="list-unstyled text-secondary">
+                              <li class="mb-2">1. Model event triggered (create, write, unlink)</li>
+                              <li class="mb-2">2. Dispatcher finds matching webhook rules</li>
+                              <li class="mb-2">3. Payload builder constructs JSON payload with selected fields</li>
+                              <li class="mb-2">4. Signature manager generates HMAC-SHA256 signature</li>
+                              <li class="mb-2">5. HTTP request sent to target URL with headers</li>
+                              <li class="mb-2">6. Response status and body captured</li>
+                              <li class="mb-2">7. Execution logged with metrics</li>
+                              <li class="mb-2">8. Failed webhooks added to retry queue with backoff</li>
+                        </ol>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Inbound Webhook Flow</h5>
+                        <ol class="list-unstyled text-secondary">
+                              <li class="mb-2">1. External system sends POST to /webhook/incoming</li>
+                              <li class="mb-2">2. Signature verification against stored secret</li>
+                              <li class="mb-2">3. Payload validation and parsing</li>
+                              <li class="mb-2">4. Custom event handler routing</li>
+                              <li class="mb-2">5. Record creation or update in Odoo</li>
+                              <li class="mb-2">6. Response sent back to caller</li>
+                              <li class="mb-2">7. Full transaction logged</li>
+                        </ol>
+                  </div>
+            </section>
+
+            <!-- Security and Signatures -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Security and
+                        Signature Verification</h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">HMAC-SHA256 Implementation</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Shared secret key generation and storage</li>
+                              <li class="mb-2">• Signature computed on request body with secret</li>
+                              <li class="mb-2">• X-Webhook-Signature header included in requests</li>
+                              <li class="mb-2">• Receiver verifies signature before processing</li>
+                              <li class="mb-2">• Timestamp-based replay attack prevention</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Authentication Methods</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Basic Authentication (base64 encoded credentials)</li>
+                              <li class="mb-2">• Bearer Token (OAuth or custom tokens)</li>
+                              <li class="mb-2">• API Key (custom header or parameter)</li>
+                              <li class="mb-2">• HMAC Signature verification</li>
+                              <li class="mb-2">• Custom header support</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Retry and Error Handling -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Retry Strategy
+                        and Error Handling</h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Exponential Backoff Configuration</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Initial retry delay: 60 seconds</li>
+                              <li class="mb-2">• Backoff multiplier: 2x per attempt</li>
+                              <li class="mb-2">• Maximum retry interval: 24 hours</li>
+                              <li class="mb-2">• Maximum retry attempts: 10 (configurable)</li>
+                              <li class="mb-2">• Jitter to prevent thundering herd</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Error Categories and Handling</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Network errors: Automatic retry</li>
+                              <li class="mb-2">• Timeout errors: Queue for retry</li>
+                              <li class="mb-2">• 5xx server errors: Retry with backoff</li>
+                              <li class="mb-2">• 4xx client errors: Log without retry</li>
+                              <li class="mb-2">• Connection refused: Queue for retry</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Payload Building -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Advanced Payload
+                        Building</h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Payload Features</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Field-level selection and filtering</li>
+                              <li class="mb-2">• Custom field naming in payload</li>
+                              <li class="mb-2">• Data type transformations</li>
+                              <li class="mb-2">• Nested relation expansion</li>
+                              <li class="mb-2">• Computed field injection</li>
+                              <li class="mb-2">• Default values for missing fields</li>
+                              <li class="mb-2">• Custom transformation hooks</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Payload Structure</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Event metadata headers</li>
+                              <li class="mb-2">• Record data with selected fields</li>
+                              <li class="mb-2">• Before/after values for write events</li>
+                              <li class="mb-2">• User and timestamp information</li>
+                              <li class="mb-2">• Custom business logic data</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Installation Requirements -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Requirements
+                  </h2>
+
+                  <div class="alert alert-info border-start border-5 mb-3" role="alert">
+                        <strong>Odoo Version:</strong> 19.0 or compatible
+                  </div>
+                  <div class="alert alert-info border-start border-5 mb-3" role="alert">
+                        <strong>Python Dependencies:</strong>
+                        <ul class="list-unstyled mb-0 mt-2">
+                              <li>• requests (HTTP client library)</li>
+                              <li>• cryptography (HMAC-SHA256 signing)</li>
+                              <li>• Standard library: json, logging, datetime, hashlib, hmac</li>
+                        </ul>
+                  </div>
+                  <div class="alert alert-info border-start border-5 mb-3" role="alert">
+                        <strong>Database:</strong> PostgreSQL 12+ with JSON support
+                  </div>
+                  <div class="alert alert-info border-start border-5" role="alert">
+                        <strong>System Requirements:</strong>
+                        <ul class="list-unstyled mb-0 mt-2">
+                              <li>• Odoo server with background job support</li>
+                              <li>• Network connectivity to target webhook endpoints</li>
+                              <li>• Sufficient disk space for webhook logs</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Getting Started -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Getting Started
+                  </h2>
+                  <ol class="text-secondary lh-lg">
+                        <li>Install the Odoo Webhook Engine module from your add-ons directory</li>
+                        <li>Navigate to Webhooks > Configuration > Webhook Rules</li>
+                        <li>Click Create to define a new webhook rule</li>
+                        <li>Select the model you want to monitor (e.g., Sale Order)</li>
+                        <li>Choose event triggers (create, write, unlink)</li>
+                        <li>Enter the target webhook URL</li>
+                        <li>Configure authentication method and headers</li>
+                        <li>Select fields to include in the payload</li>
+                        <li>Test the webhook with test mode</li>
+                        <li>Monitor webhook activity via the analytics dashboard</li>
+                  </ol>
+            </section>
+
+            <!-- API and Integration Points -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">API and
+                        Integration Points</h2>
+                  <p class="text-secondary mb-4">
+                        The webhook engine exposes multiple integration points for customization and automation:
+                  </p>
+                  <ul class="list-unstyled text-secondary">
+                        <li class="mb-2">• <strong>Dispatcher API:</strong> dispatch_event(), retry_single(),
+                              async_dispatch()</li>
+                        <li class="mb-2">• <strong>Event Hooks:</strong> _trigger_webhook_event(), custom event handlers
+                        </li>
+                        <li class="mb-2">• <strong>Payload Builders:</strong> Custom field transformations, nested data
+                              expansion</li>
+                        <li class="mb-2">• <strong>Webhook Endpoints:</strong> /webhook/incoming,
+                              /webhook/dashboard/data</li>
+                        <li class="mb-2">• <strong>Signature Verification:</strong> verify_incoming_webhook_signature()
+                        </li>
+                        <li class="mb-2">• <strong>Analytics:</strong> get_dashboard_data() for custom dashboard builds
+                        </li>
+                        <li class="mb-2">• <strong>Cron Jobs:</strong> Extensible retry and cleanup schedules</li>
+                  </ul>
+            </section>
+
+            <!-- Troubleshooting -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Troubleshooting
+                  </h2>
+
+                  <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                        <h5 class="fw-bold text-dark mb-2">Webhooks Not Triggering</h5>
+                        <p class="text-secondary mb-0">Verify rule is active, model event filter is correct, check
+                              webhook logs for any errors, ensure target URL is reachable, review network firewall
+                              settings.</p>
+                  </div>
+                  <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                        <h5 class="fw-bold text-dark mb-2">Signature Verification Failures</h5>
+                        <p class="text-secondary mb-0">Confirm shared secret matches between sender and receiver, check
+                              timestamp hasn't expired, verify payload encoding, review signature algorithm
+                              compatibility.</p>
+                  </div>
+                  <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                        <h5 class="fw-bold text-dark mb-2">Failed Webhook Retries</h5>
+                        <p class="text-secondary mb-0">Review retry queue status, check target endpoint availability,
+                              verify network connectivity, adjust retry configuration, manually retry from dead-letter
+                              queue.</p>
+                  </div>
+                  <div class="border-start border-4 border-warning bg-light p-4 mb-3 rounded-2">
+                        <h5 class="fw-bold text-dark mb-2">High Latency in Webhook Dispatch</h5>
+                        <p class="text-secondary mb-0">Enable asynchronous dispatch mode, optimize payload size, reduce
+                              field selections, monitor target endpoint response time, configure appropriate timeouts.
+                        </p>
+                  </div>
+                  <div class="border-start border-4 border-warning bg-light p-4 rounded-2">
+                        <h5 class="fw-bold text-dark mb-2">Memory or Storage Issues</h5>
+                        <p class="text-secondary mb-0">Enable log cleanup cron job, reduce log retention period, archive
+                              old logs, optimize webhook payload size, monitor database disk space.</p>
+                  </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Best Practices
+                  </h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Webhook Rule Design</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Use specific event filters to reduce false triggers</li>
+                              <li class="mb-2">• Select only required fields in payload to reduce data transfer</li>
+                              <li class="mb-2">• Implement idempotency on receiver side for failed retries</li>
+                              <li class="mb-2">• Use test mode during development</li>
+                              <li class="mb-2">• Set appropriate timeouts for target endpoints</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Security Practices</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Always verify webhook signatures before processing</li>
+                              <li class="mb-2">• Use HTTPS for all webhook URLs</li>
+                              <li class="mb-2">• Rotate secret keys periodically</li>
+                              <li class="mb-2">• Restrict webhook access with firewall rules</li>
+                              <li class="mb-2">• Log all webhook operations for audit trails</li>
+                        </ul>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Performance Optimization</h5>
+                        <ul class="list-unstyled text-secondary">
+                              <li class="mb-2">• Use async dispatch for non-critical operations</li>
+                              <li class="mb-2">• Configure appropriate retry intervals</li>
+                              <li class="mb-2">• Monitor webhook performance metrics</li>
+                              <li class="mb-2">• Archive old logs regularly</li>
+                              <li class="mb-2">• Optimize target endpoint response times</li>
+                        </ul>
+                  </div>
+            </section>
+
+            <!-- Use Cases -->
+            <section class="mb-5">
+                  <h2 class="border-bottom border-warning border-3 pb-3 mb-4 fs-2 fw-bold text-primary">Common Use Cases
+                  </h2>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">E-Commerce Order Integration</h5>
+                        <p class="text-secondary">Automatically sync Odoo sales orders to fulfillment systems, shipping
+                              providers, or accounting platforms on order creation and update.</p>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Inventory Synchronization</h5>
+                        <p class="text-secondary">Push real-time stock level updates to external marketplaces,
+                              warehouses, or third-party inventory management systems.</p>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Customer Data Sync</h5>
+                        <p class="text-secondary">Synchronize customer records to CRM systems, email marketing
+                              platforms, or data warehouses when created or modified in Odoo.</p>
+                  </div>
+
+                  <div class="bg-light p-4 mb-3 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Payment Processing</h5>
+                        <p class="text-secondary">Trigger payment processing in external payment gateways or accounting
+                              systems based on invoice creation or payment status changes.</p>
+                  </div>
+
+                  <div class="bg-light p-4 rounded-2 border border-secondary">
+                        <h5 class="fw-bold text-dark mb-2">Notification Systems</h5>
+                        <p class="text-secondary">Send real-time notifications to Slack, Teams, email systems, or SMS
+                              services based on critical business events in Odoo.</p>
+                  </div>
+            </section>
+
+      </div>
+
+      <!-- Footer Section -->
+      <div class="bg-primary text-white py-5 mt-5">
+            <div class="container text-center">
+                  <p class="mb-2">
+                        <strong>Odoo Webhook Engine</strong> - Version 1.0.0
+                  </p>
+                  <p class="mb-0 small">
+                        Enterprise-Grade Event-Driven Integration Framework | Secure Real-Time Webhooks for Odoo
+                  </p>
+            </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

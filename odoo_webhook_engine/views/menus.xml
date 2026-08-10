@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+      <!-- ═══════════════════════════════════════════════════
+         ROOT MENU
+         ═══════════════════════════════════════════════════ -->
+      <menuitem id="webhook_engine_root_menu"
+            name="Webhooks"
+            web_icon="odoo_webhook_engine,static/description/icon.png"
+            sequence="95" />
+
+      <!-- ── Dashboard ───────────────────────────────────── -->
+      <menuitem id="webhook_dashboard_menu"
+            name="📊 Dashboard"
+            parent="webhook_engine_root_menu"
+            action="webhook_dashboard_action"
+            sequence="1" />
+
+      <!-- ── Outgoing ────────────────────────────────────── -->
+      <menuitem id="webhook_outgoing_parent_menu"
+            name="Outgoing Webhooks"
+            parent="webhook_engine_root_menu"
+            sequence="10" />
+
+      <menuitem id="webhook_rule_menu"
+            name="Webhook Rules"
+            parent="webhook_outgoing_parent_menu"
+            action="webhook_rule_action"
+            sequence="1" />
+
+      <menuitem id="webhook_log_menu"
+            name="Delivery Logs"
+            parent="webhook_outgoing_parent_menu"
+            action="webhook_log_action"
+            sequence="2" />
+
+      <menuitem id="webhook_retry_menu"
+            name="Dead-Letter Queue"
+            parent="webhook_outgoing_parent_menu"
+            action="webhook_retry_action"
+            sequence="3" />
+
+      <!-- ── Incoming ────────────────────────────────────── -->
+      <menuitem id="webhook_incoming_parent_menu"
+            name="Incoming Webhooks"
+            parent="webhook_engine_root_menu"
+            sequence="20" />
+
+      <menuitem id="webhook_incoming_menu"
+            name="Endpoints"
+            parent="webhook_incoming_parent_menu"
+            action="webhook_incoming_action"
+            sequence="1" />
+
+      <!-- ── Configuration ───────────────────────────────── -->
+      <menuitem id="webhook_config_parent_menu"
+            name="Configuration"
+            parent="webhook_engine_root_menu"
+            sequence="90"
+            groups="base.group_system" />
+
+      <menuitem id="webhook_event_menu"
+            name="Event Types"
+            parent="webhook_config_parent_menu"
+            action="webhook_event_action"
+            sequence="1" />
+
+</odoo>

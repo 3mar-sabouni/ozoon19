@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+      <!-- ═══════════════════════════════════════════════════
+         CRON: Install ORM hooks on startup
+         ═══════════════════════════════════════════════════ -->
+      <record id="cron_install_hooks" model="ir.cron">
+            <field name="name">Webhook: Install ORM Hooks</field>
+            <field name="model_id" ref="model_ir_model_hook" />
+            <field name="state">code</field>
+            <field name="code">model._install_hooks()</field>
+            <field name="interval_type">days</field>
+            <field name="interval_number">1</field>
+            <field name="active">True</field>
+            <field name="priority">1</field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         CRON: Process pending retries (every 5 minutes)
+         ═══════════════════════════════════════════════════ -->
+      <record id="cron_process_retries" model="ir.cron">
+            <field name="name">Webhook: Process Retries</field>
+            <field name="model_id" ref="model_webhook_log" />
+            <field name="state">code</field>
+            <field name="code">model._cron_process_retries()</field>
+            <field name="interval_type">minutes</field>
+            <field name="interval_number">5</field>
+            <field name="active">True</field>
+            <field name="priority">10</field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         CRON: Cleanup old success logs (daily)
+         ═══════════════════════════════════════════════════ -->
+      <record id="cron_cleanup_logs" model="ir.cron">
+            <field name="name">Webhook: Cleanup Old Logs</field>
+            <field name="model_id" ref="model_webhook_log" />
+            <field name="state">code</field>
+            <field name="code">model._cron_cleanup_logs()</field>
+            <field name="interval_type">days</field>
+            <field name="interval_number">1</field>
+            <field name="active">True</field>
+            <field name="priority">50</field>
+      </record>
+
+</odoo>

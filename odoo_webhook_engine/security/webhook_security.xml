@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+      <!-- Webhook Manager group -->
+      <record id="group_webhook_manager" model="res.groups">
+            <field name="name">Webhook Manager</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+            <field name="comment">Full access to Webhook Event Engine configuration and logs.</field>
+      </record>
+
+      <!-- Webhook User group -->
+      <record id="group_webhook_user" model="res.groups">
+            <field name="name">Webhook User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+            <field name="comment">Read-only access to Webhook logs and dashboard.</field>
+      </record>
+
+      <!-- Record rules for multi-company isolation -->
+      <record id="webhook_rule_company_rule" model="ir.rule">
+            <field name="name">Webhook Rule: Multi-Company</field>
+            <field name="model_id" ref="model_webhook_rule" />
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]" />
+      </record>
+
+      <record id="webhook_log_company_rule" model="ir.rule">
+            <field name="name">Webhook Log: Multi-Company</field>
+            <field name="model_id" ref="model_webhook_log" />
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]" />
+      </record>
+
+      <record id="webhook_incoming_company_rule" model="ir.rule">
+            <field name="name">Webhook Incoming: Multi-Company</field>
+            <field name="model_id" ref="model_webhook_incoming" />
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]" />
+      </record>
+</odoo>

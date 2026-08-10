@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+
+      <!-- ═══════════════════════════════════════════════════
+         Default Webhook Event Types
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_event_on_create" model="webhook.event">
+            <field name="name">On Create</field>
+            <field name="code">on_create</field>
+            <field name="description">Triggered when a new record is created.</field>
+            <field name="sequence">1</field>
+      </record>
+
+      <record id="webhook_event_on_write" model="webhook.event">
+            <field name="name">On Update</field>
+            <field name="code">on_write</field>
+            <field name="description">Triggered when a record is updated. Optionally filter by
+                  changed fields.</field>
+            <field name="sequence">2</field>
+      </record>
+
+      <record id="webhook_event_on_unlink" model="webhook.event">
+            <field name="name">On Delete</field>
+            <field name="code">on_unlink</field>
+            <field name="description">Triggered when a record is deleted.</field>
+            <field name="sequence">3</field>
+      </record>
+
+      <record id="webhook_event_on_state_change" model="webhook.event">
+            <field name="name">On State Change</field>
+            <field name="code">on_state_change</field>
+            <field name="description">Triggered when a state/status field changes to a specific
+                  value.</field>
+            <field name="sequence">4</field>
+      </record>
+
+</odoo>

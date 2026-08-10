@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK RULE — Form View
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_rule_form_view" model="ir.ui.view">
+            <field name="name">webhook.rule.form</field>
+            <field name="model">webhook.rule</field>
+            <field name="arch" type="xml">
+                  <form string="Webhook Rule">
+                        <header>
+                              <button name="action_test_webhook" type="object"
+                                    string="🧪 Test Webhook" class="btn-primary"
+                                    confirm="Send a test payload to the target URL?" />
+                              <button name="action_view_logs" type="object"
+                                    string="📋 View Logs" class="btn-secondary" />
+                        </header>
+                        <sheet>
+                              <div class="oe_button_box" name="button_box">
+                                    <button name="action_view_logs" type="object"
+                                          class="oe_stat_button" icon="fa-list-alt">
+                                          <div class="o_stat_info">
+                                                <field name="total_sent" class="o_stat_value" />
+                                                <span class="o_stat_text">Total Sent</span>
+                                          </div>
+                                    </button>
+                                    <button class="oe_stat_button" icon="fa-check-circle"
+                                          name="action_view_logs" type="object">
+                                          <div class="o_stat_info">
+                                                <field name="success_count" class="o_stat_value" />
+                                                <span class="o_stat_text">Success</span>
+                                          </div>
+                                    </button>
+                                    <button class="oe_stat_button" icon="fa-exclamation-triangle"
+                                          name="action_view_logs" type="object">
+                                          <div class="o_stat_info">
+                                                <field name="fail_count" class="o_stat_value" />
+                                                <span class="o_stat_text">Failed</span>
+                                          </div>
+                                    </button>
+                              </div>
+
+                              <widget name="web_ribbon" title="Test Mode"
+                                    invisible="not test_mode"
+                                    bg_color="text-bg-warning" />
+
+                              <div class="oe_title">
+                                    <h1>
+                                          <field name="name"
+                                                placeholder="e.g. Notify Slack on New Lead" />
+                                    </h1>
+                              </div>
+
+                              <group>
+                                    <group string="📡 Event Trigger">
+                                          <field name="model_id" />
+                                          <field name="model_name" invisible="1" />
+                                          <field name="event_id" />
+                                          <field name="event_code" invisible="1" />
+                                          <!-- <field name="domain_filter"
+                                                widget="domain"
+                                                invisible="not model_id" /> -->
+                                          <field name="domain_filter"
+                                                invisible="not model_id" />
+                                          <field name="watched_fields"
+                                                invisible="event_code != 'on_write'"
+                                                placeholder="e.g. name,email,stage_id" />
+                                          <field name="state_field"
+                                                invisible="event_code != 'on_state_change'" />
+                                          <field name="state_value"
+                                                invisible="event_code != 'on_state_change'"
+                                                placeholder="e.g. sale, done, cancel" />
+                                    </group>
+                                    <group string="🌐 Endpoint">
+                                          <field name="target_url"
+                                                placeholder="https://hooks.slack.com/..." />
+                                          <field name="http_method" />
+                                          <field name="content_type" />
+                                          <field name="custom_headers"
+                                                placeholder='{"Authorization": "Bearer xxx"}' />
+                                          <field name="timeout" />
+                                    </group>
+                              </group>
+
+                              <notebook>
+                                    <!-- Payload Tab -->
+                                    <page string="📦 Payload" name="payload">
+                                          <group>
+                                                <field name="payload_mode" widget="radio" />
+                                          </group>
+
+                                          <!-- Field Picker mode -->
+                                          <div invisible="payload_mode != 'fields'">
+                                                <field name="payload_field_ids">
+                                                      <list editable="bottom">
+                                                            <field name="sequence" widget="handle" />
+                                                            <field name="field_id"
+                                                                  domain="[('model_id', '=', parent.model_id)]" />
+                                                            <field name="field_name" />
+                                                            <field name="field_type" />
+                                                            <field name="json_key" />
+                                                            <field name="include_relation" />
+                                                            <field name="relation_fields"
+                                                                  invisible="not include_relation"
+                                                                  placeholder="name,email" />
+                                                      </list>
+                                                </field>
+                                          </div>
+
+                                          <!-- Jinja2 Template mode -->
+                                          <div invisible="payload_mode != 'template'">
+                                                <field name="payload_template"
+                                                      widget="ace" options="{'mode': 'json'}" />
+                                                <div class="alert alert-info mt-2">
+                                                      <strong>Available variables:</strong>
+                                    <code>
+                                                      record</code>, <code>event</code>, <code>env</code>
+                                                      , <code>timestamp</code>
+                                                </div>
+                                          </div>
+
+                                          <!-- Full mode info -->
+                                          <div invisible="payload_mode != 'full'"
+                                                class="alert alert-warning">
+                                                All readable fields of the record will be included
+                                                in the payload.
+                                                Binary fields are excluded.
+                                          </div>
+                                    </page>
+
+                                    <!-- Security Tab -->
+                                    <page string="🔒 Security" name="security">
+                                          <group>
+                                                <field name="secret_key"
+                                                      password="True"
+                                                      placeholder="Leave empty to disable signing" />
+                                          </group>
+                                          <div class="alert alert-info">
+                                                <p>
+                                                      <strong>HMAC-SHA256 Signature</strong>
+                                                </p>
+                                                <p>When a secret key is set, every outgoing request
+                                                      includes an <code>X-Odoo-Signature</code>
+                                                      header containing the HMAC-SHA256 hash of the
+                                                      payload body. The receiving server should
+                                                      verify this signature to ensure request
+                                                      authenticity.</p>
+                                          </div>
+                                    </page>
+
+                                    <!-- Retry Tab -->
+                                    <page string="🔄 Retry" name="retry">
+                                          <group>
+                                                <field name="max_retries" />
+                                                <field name="retry_delay" />
+                                          </group>
+                                          <div class="alert alert-info">
+                                                <p>Failed deliveries are retried with <strong>exponential
+                                                      backoff</strong>. After exhausting all
+                                                      retries, the delivery moves to the <strong>dead-letter
+                                                      queue</strong>.</p>
+                                          </div>
+                                    </page>
+
+                                    <!-- Settings Tab -->
+                                    <page string="⚙️ Settings" name="settings">
+                                          <group>
+                                                <field name="active" />
+                                                <field name="test_mode" />
+                                                <field name="sequence" />
+                                                <field name="company_id"
+                                                      groups="base.group_multi_company" />
+                                          </group>
+                                    </page>
+                              </notebook>
+                        </sheet>
+                        <chatter />
+                  </form>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK RULE — List View
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_rule_list_view" model="ir.ui.view">
+            <field name="name">webhook.rule.list</field>
+            <field name="model">webhook.rule</field>
+            <field name="arch" type="xml">
+                  <list string="Webhook Rules" decoration-muted="not active"
+                        decoration-warning="test_mode">
+                        <field name="sequence" widget="handle" />
+                        <field name="name" />
+                        <field name="model_name" />
+                        <field name="event_code" string="Event" />
+                        <field name="target_url" string="Endpoint" />
+                        <field name="http_method" />
+                        <field name="total_sent" />
+                        <field name="success_rate" widget="progressbar" />
+                        <field name="active" />
+                        <field name="test_mode" />
+                  </list>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK RULE — Search View
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_rule_search_view" model="ir.ui.view">
+            <field name="name">webhook.rule.search</field>
+            <field name="model">webhook.rule</field>
+            <field name="arch" type="xml">
+                  <search string="Search Webhook Rules">
+                        <field name="name" />
+                        <field name="model_name" />
+                        <field name="target_url" />
+                        <filter name="active" string="Active" domain="[('active', '=', True)]" />
+
+
+                  </search>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK RULE — Action
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_rule_action" model="ir.actions.act_window">
+            <field name="name">Webhook Rules</field>
+            <field name="res_model">webhook.rule</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="webhook_rule_search_view" />
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                        Create your first Webhook Rule
+                  </p>
+                  <p>
+                        Configure rules to automatically push Odoo data to external
+                        systems when records are created, updated, or deleted.
+                  </p>
+            </field>
+      </record>
+
+</odoo>

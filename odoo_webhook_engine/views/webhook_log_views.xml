@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK LOG — Form View
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_log_form_view" model="ir.ui.view">
+            <field name="name">webhook.log.form</field>
+            <field name="model">webhook.log</field>
+            <field name="arch" type="xml">
+                  <form string="Webhook Log" create="0">
+                        <header>
+                              <button name="action_retry_now" type="object"
+                                    string="🔁 Retry Now" class="btn-warning"
+                                    invisible="status != 'failed'"
+                                    confirm="Retry this webhook delivery?" />
+                        </header>
+                        <sheet>
+                              <div class="oe_title">
+                                    <h1>
+                                          <field name="rule_name" readonly="1" />
+                                    </h1>
+                              </div>
+
+                              <group>
+                                    <group string="📡 Request Info">
+                                          <field name="rule_id" />
+                                          <field name="model_name" />
+                                          <field name="record_id" />
+                                          <field name="event_code" />
+                                          <field name="target_url" widget="url" />
+                                          <field name="http_method" />
+                                    </group>
+                                    <group string="📊 Result">
+                                          <field name="status"
+                                                decoration-success="status == 'success'"
+                                                decoration-danger="status == 'failed'"
+                                                decoration-warning="status == 'pending'"
+                                                decoration-info="status == 'test'"
+                                                widget="badge" />
+                                          <field name="response_status" />
+                                          <field name="execution_time" string="Time (ms)" />
+                                          <field name="retry_count" />
+                                          <field name="next_retry" />
+                                          <field name="is_test" />
+                                          <field name="create_date" string="Sent At" />
+                                    </group>
+                              </group>
+
+                              <notebook>
+                                    <page string="📤 Request Payload" name="request">
+                                          <field name="request_payload"
+                                                widget="ace" options="{'mode': 'json'}"
+                                                readonly="1" />
+                                    </page>
+                                    <page string="📥 Response Body" name="response">
+                                          <field name="response_body"
+                                                widget="ace" options="{'mode': 'json'}"
+                                                readonly="1" />
+                                    </page>
+                                    <page string="📋 Headers" name="headers">
+                                          <group>
+                                                <field name="request_headers"
+                                                      widget="ace" options="{'mode': 'json'}"
+                                                      readonly="1" string="Request Headers" />
+                                          </group>
+                                          <group>
+                                                <field name="response_headers"
+                                                      widget="ace" options="{'mode': 'json'}"
+                                                      readonly="1" string="Response Headers" />
+                                          </group>
+                                    </page>
+                                    <page string="❌ Error" name="error"
+                                          invisible="not error_message">
+                                          <field name="error_message" readonly="1" />
+                                    </page>
+                              </notebook>
+                        </sheet>
+                  </form>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK LOG — List View
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_log_list_view" model="ir.ui.view">
+            <field name="name">webhook.log.list</field>
+            <field name="model">webhook.log</field>
+            <field name="arch" type="xml">
+                  <list string="Webhook Logs" create="0"
+                        decoration-success="status == 'success'"
+                        decoration-danger="status == 'failed'"
+                        decoration-warning="status == 'pending'"
+                        decoration-info="status == 'test'">
+                        <field name="create_date" string="Time" />
+                        <field name="rule_name" />
+                        <field name="model_name" />
+                        <field name="record_id" />
+                        <field name="event_code" string="Event" />
+                        <field name="target_url" />
+                        <field name="http_method" />
+                        <field name="response_status" string="HTTP" />
+                        <field name="execution_time" string="Time (ms)" />
+                        <field name="status" widget="badge" />
+                        <field name="retry_count" />
+                  </list>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK LOG — Search View
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_log_search_view" model="ir.ui.view">
+            <field name="name">webhook.log.search</field>
+            <field name="model">webhook.log</field>
+            <field name="arch" type="xml">
+                  <search string="Search Logs">
+                        <field name="rule_name" />
+                        <field name="model_name" />
+                        <field name="target_url" />
+                        <field name="event_code" />
+                      
+                     
+                  </search>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK LOG — Action
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_log_action" model="ir.actions.act_window">
+            <field name="name">Webhook Logs</field>
+            <field name="res_model">webhook.log</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="webhook_log_search_view" />
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                        No webhook logs yet
+                  </p>
+                  <p>Logs appear automatically when webhooks are dispatched.</p>
+            </field>
+      </record>
+
+      <!-- ═══════════════════════════════════════════════════
+         WEBHOOK RETRY (Dead-Letter Queue) — List
+         ═══════════════════════════════════════════════════ -->
+      <record id="webhook_retry_list_view" model="ir.ui.view">
+            <field name="name">webhook.retry.list</field>
+            <field name="model">webhook.retry</field>
+            <field name="arch" type="xml">
+                  <list string="Dead-Letter Queue"
+                        decoration-danger="state == 'pending'"
+                        decoration-muted="state == 'discarded'"
+                        decoration-success="state == 'retried'">
+                        <field name="create_date" string="Failed At" />
+                        <field name="rule_id" />
+                        <field name="model_name" />
+                        <field name="record_id" />
+                        <field name="retry_count" />
+                        <field name="error_message" />
+                        <field name="state" widget="badge" />
+                        <button name="action_retry" type="object" string="Retry"
+                              class="btn-sm btn-warning" invisible="state != 'pending'" />
+                        <button name="action_discard" type="object" string="Discard"
+                              class="btn-sm btn-secondary" invisible="state != 'pending'" />
+                  </list>
+            </field>
+      </record>
+
+      <record id="webhook_retry_form_view" model="ir.ui.view">
+            <field name="name">webhook.retry.form</field>
+            <field name="model">webhook.retry</field>
+            <field name="arch" type="xml">
+                  <form string="Dead-Letter Entry">
+                        <header>
+                              <button name="action_retry" type="object"
+                                    string="🔁 Retry" class="btn-warning"
+                                    invisible="state != 'pending'" />
+                              <button name="action_discard" type="object"
+                                    string="🗑️ Discard" class="btn-secondary"
+                                    invisible="state != 'pending'" />
+                              <field name="state" widget="statusbar" />
+                        </header>
+                        <sheet>
+                              <group>
+                                    <field name="log_id" />
+                                    <field name="rule_id" />
+                                    <field name="model_name" />
+                                    <field name="record_id" />
+                                    <field name="retry_count" />
+                              </group>
+                              <group string="Error">
+                                    <field name="error_message" />
+                              </group>
+                              <group string="Original Payload">
+                                    <field name="payload" widget="ace" options="{'mode': 'json'}" />
+                              </group>
+                        </sheet>
+                  </form>
+            </field>
+      </record>
+
+      <record id="webhook_retry_action" model="ir.actions.act_window">
+            <field name="name">Dead-Letter Queue</field>
+            <field name="res_model">webhook.retry</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                  <p class="o_view_nocontent_smiling_face">
+                        No failed deliveries in the dead-letter queue
+                  </p>
+            </field>
+      </record>
+
+</odoo>

@@ -1,0 +1,21 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_webhook_event_manager,webhook.event manager,model_webhook_event,odoo_webhook_engine.group_webhook_manager,1,1,1,1
+access_webhook_event_user,webhook.event user,model_webhook_event,odoo_webhook_engine.group_webhook_user,1,0,0,0
+access_webhook_event_system,webhook.event system,model_webhook_event,base.group_system,1,1,1,1
+access_webhook_rule_manager,webhook.rule manager,model_webhook_rule,odoo_webhook_engine.group_webhook_manager,1,1,1,1
+access_webhook_rule_user,webhook.rule user,model_webhook_rule,odoo_webhook_engine.group_webhook_user,1,0,0,0
+access_webhook_rule_system,webhook.rule system,model_webhook_rule,base.group_system,1,1,1,1
+access_webhook_payload_field_manager,webhook.payload.field manager,model_webhook_payload_field,odoo_webhook_engine.group_webhook_manager,1,1,1,1
+access_webhook_payload_field_user,webhook.payload.field user,model_webhook_payload_field,odoo_webhook_engine.group_webhook_user,1,0,0,0
+access_webhook_payload_field_system,webhook.payload.field system,model_webhook_payload_field,base.group_system,1,1,1,1
+access_webhook_log_manager,webhook.log manager,model_webhook_log,odoo_webhook_engine.group_webhook_manager,1,1,1,1
+access_webhook_log_user,webhook.log user,model_webhook_log,odoo_webhook_engine.group_webhook_user,1,0,0,0
+access_webhook_log_system,webhook.log system,model_webhook_log,base.group_system,1,1,1,1
+access_webhook_retry_manager,webhook.retry manager,model_webhook_retry,odoo_webhook_engine.group_webhook_manager,1,1,1,1
+access_webhook_retry_user,webhook.retry user,model_webhook_retry,odoo_webhook_engine.group_webhook_user,1,0,0,0
+access_webhook_retry_system,webhook.retry system,model_webhook_retry,base.group_system,1,1,1,1
+access_webhook_incoming_manager,webhook.incoming manager,model_webhook_incoming,odoo_webhook_engine.group_webhook_manager,1,1,1,1
+access_webhook_incoming_user,webhook.incoming user,model_webhook_incoming,odoo_webhook_engine.group_webhook_user,1,0,0,0
+access_webhook_incoming_system,webhook.incoming system,model_webhook_incoming,base.group_system,1,1,1,1
+access_ir_model_hook_system,ir.model.hook system,model_ir_model_hook,base.group_system,1,1,1,1
+access_ir_model_hook_user,ir.model.hook user,model_ir_model_hook,base.group_user,1,0,0,0
