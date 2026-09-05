@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_publish_product_templates_to_ecommerce" model="ir.actions.server">
+        <field name="name">Publish to Ecommerce</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_ecommerce_publish_to_ecommerce()</field>
+    </record>
+
+    <record id="action_publish_product_variants_to_ecommerce" model="ir.actions.server">
+        <field name="name">Publish Product Templates to Ecommerce</field>
+        <field name="model_id" ref="product.model_product_product"/>
+        <field name="binding_model_id" ref="product.model_product_product"/>
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_ecommerce_publish_to_ecommerce()</field>
+    </record>
+
+    <record id="action_publish_product_categories_to_ecommerce" model="ir.actions.server">
+        <field name="name">Publish to Ecommerce</field>
+        <field name="model_id" ref="product.model_product_category"/>
+        <field name="binding_model_id" ref="product.model_product_category"/>
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_ecommerce_publish_to_ecommerce()</field>
+    </record>
+
+    <record id="action_publish_product_attributes_to_ecommerce" model="ir.actions.server">
+        <field name="name">Publish to Ecommerce</field>
+        <field name="model_id" ref="product.model_product_attribute"/>
+        <field name="binding_model_id" ref="product.model_product_attribute"/>
+        <field name="binding_type">action</field>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_ecommerce_publish_to_ecommerce()</field>
+    </record>
+</odoo>

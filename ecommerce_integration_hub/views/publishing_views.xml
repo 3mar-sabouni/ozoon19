@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product template publication is independent from Odoo Website. -->
+    <record id="view_product_template_ecommerce_integration_publish" model="ir.ui.view">
+        <field name="name">product.template.ecommerce.integration.publish</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Ecommerce Publishing" name="ecommerce_integration_publishing">
+                    <group>
+                        <field name="ecommerce_integration_publish"/>
+                        <field name="ecommerce_integration_instance_ids"
+                               widget="many2many_tags"
+                               invisible="not ecommerce_integration_publish"
+                               options="{'no_create': True}"/>
+                    </group>
+                    <div class="alert alert-info" role="alert" invisible="not ecommerce_integration_publish">
+                        Leave Ecommerce Instances empty to publish to all active instances compatible with the product company. Selecting instances restricts publication to those instances only.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_template_list_ecommerce_integration_publish" model="ir.ui.view">
+        <field name="name">product.template.list.ecommerce.integration.publish</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="categ_id" position="after">
+                <field name="ecommerce_integration_publish" optional="show"/>
+                <field name="ecommerce_integration_instance_ids" widget="many2many_tags" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Standard internal Odoo categories. -->
+    <record id="view_product_category_ecommerce_integration_publish" model="ir.ui.view">
+        <field name="name">product.category.ecommerce.integration.publish</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <group name="first" position="after">
+                <group string="Ecommerce Publishing">
+                    <field name="ecommerce_integration_publish"/>
+                    <field name="ecommerce_integration_instance_ids"
+                           widget="many2many_tags"
+                           invisible="not ecommerce_integration_publish"
+                           options="{'no_create': True}"/>
+                    <div class="text-muted" invisible="not ecommerce_integration_publish">
+                        Leave instances empty to publish to all active ecommerce instances.
+                    </div>
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <record id="view_product_category_list_ecommerce_integration_publish" model="ir.ui.view">
+        <field name="name">product.category.list.ecommerce.integration.publish</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>
+        <field name="arch" type="xml">
+            <field name="display_name" position="after">
+                <field name="ecommerce_integration_publish" optional="show"/>
+                <field name="ecommerce_integration_instance_ids" widget="many2many_tags" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Publication is defined only on the attribute. Every value inherits the attribute scope. -->
+    <record id="view_product_attribute_ecommerce_integration_publish" model="ir.ui.view">
+        <field name="name">product.attribute.ecommerce.integration.publish</field>
+        <field name="model">product.attribute</field>
+        <field name="inherit_id" ref="product.product_attribute_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='main_fields']" position="inside">
+                <group string="Ecommerce Publishing">
+                    <field name="ecommerce_integration_publish"/>
+                    <field name="ecommerce_integration_instance_ids"
+                           widget="many2many_tags"
+                           invisible="not ecommerce_integration_publish"
+                           options="{'no_create': True}"/>
+                    <div class="text-muted" invisible="not ecommerce_integration_publish">
+                        All values of this attribute follow the same publication scope. Leave instances empty for all active instances.
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_attribute_list_ecommerce_integration_publish" model="ir.ui.view">
+        <field name="name">product.attribute.list.ecommerce.integration.publish</field>
+        <field name="model">product.attribute</field>
+        <field name="inherit_id" ref="product.attribute_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="create_variant" position="after">
+                <field name="ecommerce_integration_publish" optional="show"/>
+                <field name="ecommerce_integration_instance_ids" widget="many2many_tags" optional="hide"/>
+            </field>
+        </field>
+    </record>
+</odoo>

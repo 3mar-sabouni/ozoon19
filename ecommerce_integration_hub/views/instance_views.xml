@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ecommerce_integration_instance_list" model="ir.ui.view">
+        <field name="name">ecommerce.integration.instance.list</field>
+        <field name="model">ecommerce.integration.instance</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="not active" decoration-warning="health == 'warning'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="warehouse_id"/>
+                <field name="source_currency_id"/>
+                <field name="target_currency_id"/>
+                <field name="health" widget="badge"/>
+                <field name="pending_count"/>
+                <field name="success_count"/>
+                <field name="failure_count"/>
+                <field name="last_success_at"/>
+                <field name="last_failure_at"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_instance_kanban" model="ir.ui.view">
+        <field name="name">ecommerce.integration.instance.kanban</field>
+        <field name="model">ecommerce.integration.instance</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard" sample="1">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="company_id"/>
+                <field name="health"/>
+                <field name="pending_count"/>
+                <field name="success_count"/>
+                <field name="failure_count"/>
+                <field name="last_success_at"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <strong class="fs-5"><field name="name"/></strong>
+                                <div class="text-muted"><field name="code"/> · <field name="company_id"/></div>
+                            </div>
+                            <field name="health" widget="badge"/>
+                        </div>
+                        <div class="row g-2 text-center">
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold"><field name="pending_count"/></div>
+                                    <small>Pending</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold"><field name="success_count"/></div>
+                                    <small>Success</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <div class="fw-bold"><field name="failure_count"/></div>
+                                    <small>Failed</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-muted">
+                            <small>Last success: <field name="last_success_at"/></small>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_instance_form" model="ir.ui.view">
+        <field name="name">ecommerce.integration.instance.form</field>
+        <field name="model">ecommerce.integration.instance</field>
+        <field name="arch" type="xml">
+            <form string="Ecommerce Instance">
+                <header>
+                    <button name="action_bulk_sync" type="object" string="Bulk Sync" class="btn-primary" groups="ecommerce_integration_hub.group_ecommerce_connector_manager"/>
+                    <button name="action_clear_transactions" type="object" string="Clear Transactions" groups="ecommerce_integration_hub.group_ecommerce_connector_manager"/>
+                    <field name="health" widget="statusbar" statusbar_visible="ok,warning,disabled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_queue" icon="fa-tasks">
+                            <field name="pending_count" widget="statinfo" string="Pending"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_logs" icon="fa-list-alt">
+                            <field name="log_count" widget="statinfo" string="Logs"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_bindings" icon="fa-link">
+                            <field name="binding_count" widget="statinfo" string="Bindings"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Main Online Store"/></h1>
+                        <field name="code" readonly="1"/>
+                    </div>
+
+                    <group>
+                        <group string="Scope">
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="warehouse_id" domain="[('company_id', '=', company_id)]"/>
+                        </group>
+                        <group string="Pricing &amp; Currency">
+                            <field name="pricelist_id" string="Pricelist (Optional)" domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]" placeholder="Use standard Sales Price"/>
+                            <field name="source_currency_id" readonly="1"/>
+                            <field name="target_currency_id"/>
+                            <field name="sku_source"/>
+                            <field name="multi_attribute_mode"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Connection">
+                            <group>
+                                <group>
+                                    <field name="base_url" placeholder="https://api.example.com"/>
+                                    <field name="category_endpoint"/>
+                                    <field name="product_endpoint"/>
+                                    <field name="stock_endpoint"/>
+                                    <field name="odoo_public_url" string="Odoo Base URL (Images Only)"/>
+                                    <field name="shared_secret" password="True" groups="ecommerce_integration_hub.group_ecommerce_connector_manager"/>
+                                </group>
+                                <group string="Reliability">
+                                    <field name="timeout_seconds"/>
+                                    <field name="max_attempts"/>
+                                    <field name="queue_batch_size"/>
+                                    <field name="stock_batch_size"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                This connector is independent from Odoo Website. Publication is controlled on each product, category and attribute by selecting the ecommerce instances that should receive it. Empty instance selection means all applicable active instances. Requests are queued and sent asynchronously.
+                            </div>
+                        </page>
+                        <page string="Automatic Sync">
+                            <group>
+                                <field name="auto_sync_category"/>
+                                <field name="auto_sync_product"/>
+                                <field name="auto_sync_stock"/>
+                                <field name="inbound_orders_enabled"/>
+                                <field name="auto_confirm_inbound_orders" invisible="not inbound_orders_enabled"/>
+                                <field name="apply_store_cancellations" invisible="not inbound_orders_enabled"/>
+                            </group>
+                        </page>
+                        <page string="Accounting">
+                            <group>
+                                <group string="Invoice Automation">
+                                    <field name="accounting_enabled"/>
+                                    <field name="invoice_trigger" invisible="not accounting_enabled"/>
+                                    <field name="invoice_journal_id"
+                                           invisible="not accounting_enabled"
+                                           domain="[('company_id', '=', company_id), ('type', '=', 'sale')]"
+                                           options="{'no_create': True}"
+                                           placeholder="Use Odoo default Sales Journal"/>
+                                    <field name="invoice_payment_term_id"
+                                           invisible="not accounting_enabled"
+                                           options="{'no_create': True}"/>
+                                    <field name="auto_post_invoice"
+                                           invisible="not accounting_enabled or invoice_trigger == 'manual'"/>
+                                </group>
+                                <group string="Payment Automation">
+                                    <field name="auto_register_payment"
+                                           invisible="not accounting_enabled or invoice_trigger == 'manual'"/>
+                                    <field name="payment_journal_id"
+                                           string="Online / Default Payment Journal"
+                                           invisible="not accounting_enabled or not auto_register_payment"
+                                           domain="[('company_id', '=', company_id), ('type', 'in', ['bank', 'cash', 'credit'])]"
+                                           options="{'no_create': True}"/>
+                                    <field name="payment_method_line_id"
+                                           string="Online / Default Payment Method"
+                                           invisible="not accounting_enabled or not auto_register_payment or not payment_journal_id"
+                                           domain="[('journal_id', '=', payment_journal_id), ('payment_type', '=', 'inbound')]"
+                                           options="{'no_create': True}"
+                                           placeholder="Use journal default inbound method"/>
+                                    <field name="cod_payment_journal_id"
+                                           invisible="not accounting_enabled or not auto_register_payment"
+                                           domain="[('company_id', '=', company_id), ('type', 'in', ['bank', 'cash', 'credit'])]"
+                                           options="{'no_create': True}"
+                                           placeholder="Fallback to Online / Default Journal"/>
+                                    <field name="cod_payment_method_line_id"
+                                           invisible="not accounting_enabled or not auto_register_payment or not cod_payment_journal_id"
+                                           domain="[('journal_id', '=', cod_payment_journal_id), ('payment_type', '=', 'inbound')]"
+                                           options="{'no_create': True}"
+                                           placeholder="Use journal default inbound method"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert" invisible="not accounting_enabled">
+                                Product income accounts, receivable accounts, taxes and fiscal positions remain standard Odoo accounting configuration.
+                                This tab only controls invoice timing, invoice journal, payment terms and automatic payment registration.
+                                Cash on Delivery can use its own journal/method; if left empty it falls back to the Online / Default payment configuration.
+                            </div>
+                        </page>
+                        <page string="Translations">
+                            <field name="locale_ids">
+                                <list editable="bottom">
+                                    <field name="odoo_lang_id"/>
+                                    <field name="external_locale"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Monitoring">
+                            <group>
+                                <group>
+                                    <field name="last_success_at" readonly="1"/>
+                                    <field name="success_count" readonly="1"/>
+                                    <field name="pending_count" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="last_failure_at" readonly="1"/>
+                                    <field name="failure_count" readonly="1"/>
+                                    <field name="last_failure_message" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ecommerce_integration_instance" model="ir.actions.act_window">
+        <field name="name">Instances</field>
+        <field name="res_model">ecommerce.integration.instance</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+</odoo>

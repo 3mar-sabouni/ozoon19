@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ecommerce_integration_log_search" model="ir.ui.view">
+        <field name="name">ecommerce.integration.log.search</field>
+        <field name="model">ecommerce.integration.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="instance_id"/>
+                <field name="sync_type"/>
+                <field name="summary"/>
+                <filter string="Success" name="success" domain="[('status', '=', 'success')]"/>
+                <filter string="Warnings" name="warning" domain="[('status', '=', 'warning')]"/>
+                <filter string="Failures" name="failure" domain="[('status', '=', 'failure')]"/>
+                <group>
+                    <filter string="Instance" name="group_by_instance" context="{'group_by': 'instance_id'}"/>
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'sync_type'}"/>
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
+                    <filter string="Day" name="group_by_day" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_log_list" model="ir.ui.view">
+        <field name="name">ecommerce.integration.log.list</field>
+        <field name="model">ecommerce.integration.log</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'success'" decoration-warning="status == 'warning'" decoration-danger="status == 'failure'">
+                <field name="create_date"/>
+                <field name="instance_id"/>
+                <field name="sync_type"/>
+                <field name="status" widget="badge"/>
+                <field name="summary"/>
+                <field name="http_status"/>
+                <field name="attempt"/>
+                <field name="duration_ms"/>
+                <field name="model_name" optional="hide"/>
+                <field name="res_id" optional="hide"/>
+                <field name="error_message" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_log_form" model="ir.ui.view">
+        <field name="name">ecommerce.integration.log.form</field>
+        <field name="model">ecommerce.integration.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="instance_id"/>
+                            <field name="sync_type"/>
+                            <field name="direction"/>
+                            <field name="status" widget="badge"/>
+                        </group>
+                        <group>
+                            <field name="create_date"/>
+                            <field name="http_status"/>
+                            <field name="attempt"/>
+                            <field name="duration_ms"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="summary"/>
+                        <field name="model_name"/>
+                        <field name="res_id"/>
+                        <field name="error_message"/>
+                    </group>
+                    <notebook>
+                        <page string="Request">
+                            <field name="request_json" widget="text" nolabel="1"/>
+                        </page>
+                        <page string="Response">
+                            <field name="response_json" widget="text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_log_pivot" model="ir.ui.view">
+        <field name="name">ecommerce.integration.log.pivot</field>
+        <field name="model">ecommerce.integration.log</field>
+        <field name="arch" type="xml">
+            <pivot string="Sync Analysis">
+                <field name="instance_id" type="row"/>
+                <field name="sync_type" type="row"/>
+                <field name="status" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_log_graph" model="ir.ui.view">
+        <field name="name">ecommerce.integration.log.graph</field>
+        <field name="model">ecommerce.integration.log</field>
+        <field name="arch" type="xml">
+            <graph string="Sync Results" type="bar">
+                <field name="create_date" interval="day"/>
+                <field name="status"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_ecommerce_integration_log" model="ir.actions.act_window">
+        <field name="name">Sync Logs</field>
+        <field name="res_model">ecommerce.integration.log</field>
+        <field name="view_mode">list,graph,pivot,form</field>
+        <field name="search_view_id" ref="view_ecommerce_integration_log_search"/>
+    </record>
+</odoo>

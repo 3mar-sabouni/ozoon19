@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_ecommerce_integration_instance" model="ir.sequence">
+        <field name="name">Ecommerce Instance</field>
+        <field name="code">ecommerce.integration.instance</field>
+        <field name="prefix">ECOMM-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ecommerce_integration_bulk_sync_wizard_form" model="ir.ui.view">
+        <field name="name">ecommerce.integration.bulk.sync.wizard.form</field>
+        <field name="model">ecommerce.integration.bulk.sync.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Sync">
+                <group>
+                    <field name="instance_id"/>
+                </group>
+                <group string="Queue">
+                    <field name="sync_categories"/>
+                    <field name="sync_attributes"/>
+                    <field name="sync_products"/>
+                    <field name="sync_stock"/>
+                </group>
+                <div class="alert alert-info" role="alert">
+                    Only records explicitly marked <b>Publish to Ecommerce</b> and assigned to this instance are queued. Categories are queued before products; stock is queued after products. Attribute/value changes are embedded in the product/variant payload, so changing an attribute re-queues the affected products.
+                </div>
+                <footer>
+                    <button name="action_queue_sync" type="object" string="Queue Bulk Sync" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ecommerce_integration_bulk_sync_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Sync</field>
+        <field name="res_model">ecommerce.integration.bulk.sync.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

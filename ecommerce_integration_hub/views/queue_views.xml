@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ecommerce_integration_queue_search" model="ir.ui.view">
+        <field name="name">ecommerce.integration.queue.search</field>
+        <field name="model">ecommerce.integration.queue</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="instance_id"/>
+                <field name="sync_type"/>
+                <field name="model_name"/>
+                <filter string="Pending" name="pending" domain="[('state', 'in', ['pending', 'retry', 'processing'])]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <filter string="Done" name="done" domain="[('state', '=', 'done')]"/>
+                <group>
+                    <filter string="Instance" name="group_by_instance" context="{'group_by': 'instance_id'}"/>
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'sync_type'}"/>
+                    <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_queue_list" model="ir.ui.view">
+        <field name="name">ecommerce.integration.queue.list</field>
+        <field name="model">ecommerce.integration.queue</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'" decoration-danger="state == 'failed'" decoration-warning="state == 'retry'">
+                <field name="instance_id"/>
+                <field name="sync_type"/>
+                <field name="summary"/>
+                <field name="state" widget="badge"/>
+                <field name="priority"/>
+                <field name="attempt_count"/>
+                <field name="max_attempts"/>
+                <field name="next_attempt_at"/>
+                <field name="last_error" optional="show"/>
+                <field name="create_date" optional="hide"/>
+                <field name="completed_at" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ecommerce_integration_queue_form" model="ir.ui.view">
+        <field name="name">ecommerce.integration.queue.form</field>
+        <field name="model">ecommerce.integration.queue</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_retry" type="object" string="Retry" class="btn-primary" invisible="state != 'failed'" groups="ecommerce_integration_hub.group_ecommerce_connector_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,processing,retry,done,failed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="instance_id"/>
+                            <field name="sync_type"/>
+                            <field name="model_name"/>
+                            <field name="res_id"/>
+                        </group>
+                        <group>
+                            <field name="priority"/>
+                            <field name="attempt_count"/>
+                            <field name="max_attempts"/>
+                            <field name="next_attempt_at"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="last_error"/>
+                        <field name="data_json" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ecommerce_integration_queue" model="ir.actions.act_window">
+        <field name="name">Sync Queue</field>
+        <field name="res_model">ecommerce.integration.queue</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ecommerce_integration_queue_search"/>
+    </record>
+</odoo>

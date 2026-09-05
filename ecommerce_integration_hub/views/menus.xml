@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ecommerce_integration_root" name="Ecommerce Integration" sequence="45" groups="ecommerce_integration_hub.group_ecommerce_connector_user"/>
+
+    <menuitem id="menu_ecommerce_integration_dashboard" name="Dashboard" parent="menu_ecommerce_integration_root" action="action_ecommerce_integration_dashboard_owl" sequence="10"/>
+    <menuitem id="menu_ecommerce_integration_instances" name="Instances" parent="menu_ecommerce_integration_root" action="action_ecommerce_integration_instance" sequence="20" groups="ecommerce_integration_hub.group_ecommerce_connector_manager"/>
+    <menuitem id="menu_ecommerce_integration_bulk" name="Bulk Sync" parent="menu_ecommerce_integration_root" action="action_ecommerce_integration_bulk_sync_wizard" sequence="30" groups="ecommerce_integration_hub.group_ecommerce_connector_manager"/>
+    <menuitem id="menu_ecommerce_integration_queue" name="Sync Queue" parent="menu_ecommerce_integration_root" action="action_ecommerce_integration_queue" sequence="40"/>
+    <menuitem id="menu_ecommerce_integration_logs" name="Sync Logs" parent="menu_ecommerce_integration_root" action="action_ecommerce_integration_log" sequence="50"/>
+    <menuitem id="menu_ecommerce_integration_bindings" name="Bindings" parent="menu_ecommerce_integration_root" action="action_ecommerce_integration_binding" sequence="60"/>
+</odoo>

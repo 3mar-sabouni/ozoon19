@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ecommerce_integration_hub.Dashboard">
+        <div class="o_ecommerce_dashboard">
+            <div class="eih-dashboard-toolbar">
+                <div class="eih-toolbar-brand">
+                    <div class="eih-brand-icon"><i class="fa fa-exchange"/></div>
+                    <div>
+                        <div class="eih-toolbar-title">Ecommerce Integration</div>
+                        <div class="eih-toolbar-subtitle">Operations &amp; synchronization control center</div>
+                    </div>
+                </div>
+
+                <div class="eih-toolbar-filters" t-if="hasInstances">
+                    <div class="eih-filter-field eih-filter-instance">
+                        <label>Instance</label>
+                        <select class="form-select" t-on-change="onInstanceChange">
+                            <t t-foreach="state.instances" t-as="instance" t-key="instance.id">
+                                <option t-att-value="instance.id" t-att-selected="instance.id === state.instanceId">
+                                    <t t-esc="instance.name"/> · <t t-esc="instance.company"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="eih-filter-field">
+                        <label>Period</label>
+                        <select class="form-select" t-att-value="state.preset" t-on-change="onPresetChange">
+                            <option value="current_month">Current month</option>
+                            <option value="today">Today</option>
+                            <option value="last_7">Last 7 days</option>
+                            <option value="last_30">Last 30 days</option>
+                            <option value="previous_month">Previous month</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="eih-filter-field eih-filter-date">
+                        <label>From</label>
+                        <input type="date" class="form-control" t-att-value="state.dateFrom" t-on-change="onDateFromChange"/>
+                    </div>
+                    <div class="eih-filter-field eih-filter-date">
+                        <label>To</label>
+                        <input type="date" class="form-control" t-att-value="state.dateTo" t-on-change="onDateToChange"/>
+                    </div>
+                    <button class="btn btn-light eih-refresh-btn" t-on-click="loadDashboard" title="Refresh dashboard">
+                        <i class="fa fa-refresh" t-att-class="state.loading ? 'fa fa-refresh fa-spin' : 'fa fa-refresh'"/>
+                    </button>
+                </div>
+            </div>
+
+            <div class="eih-dashboard-empty" t-if="!hasInstances &amp;&amp; !state.loading">
+                <div class="eih-empty-icon"><i class="fa fa-plug"/></div>
+                <h2>No ecommerce instance yet</h2>
+                <p>Create an integration instance to start monitoring synchronization.</p>
+            </div>
+
+            <div class="eih-dashboard-loading" t-if="state.loading &amp;&amp; !state.data">
+                <div class="eih-loader"/>
+                <div>Loading integration health…</div>
+            </div>
+
+            <t t-if="state.data">
+                <main class="eih-dashboard-content" t-att-class="state.loading ? 'eih-is-refreshing' : ''">
+                    <section class="eih-instance-hero">
+                        <div class="eih-instance-main">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <h1><t t-esc="state.data.instance.name"/></h1>
+                                <span t-att-class="'eih-health eih-health--' + state.data.instance.health">
+                                    <span class="eih-health-dot"/>
+                                    <t t-esc="healthLabel"/>
+                                </span>
+                                <span class="eih-code"><t t-esc="state.data.instance.code"/></span>
+                            </div>
+                            <div class="eih-instance-meta">
+                                <span><i class="fa fa-building-o"/> <t t-esc="state.data.instance.company"/></span>
+                                <span><i class="fa fa-cubes"/> <t t-esc="state.data.instance.warehouse"/></span>
+                                <span><i class="fa fa-tag"/> <t t-esc="state.data.instance.pricelist"/></span>
+                                <span><i class="fa fa-money"/> <t t-esc="state.data.instance.source_currency"/> → <t t-esc="state.data.instance.target_currency"/></span>
+                            </div>
+                        </div>
+                        <div class="eih-hero-actions">
+                            <button class="btn btn-outline-secondary" t-on-click="openInstance"><i class="fa fa-cog me-1"/> Configure</button>
+                            <button class="btn btn-outline-primary" t-on-click="() => this.openLogs()"><i class="fa fa-list-alt me-1"/> Logs</button>
+                            <button class="btn btn-primary" t-on-click="openBulkSync"><i class="fa fa-cloud-upload me-1"/> Bulk Sync</button>
+                        </div>
+                    </section>
+
+                    <section class="eih-kpi-grid">
+                        <button class="eih-kpi-card eih-kpi-card--success" t-on-click="() => this.openLogs('success')">
+                            <div class="eih-kpi-icon"><i class="fa fa-check"/></div>
+                            <div class="eih-kpi-body">
+                                <div class="eih-kpi-label">Successful</div>
+                                <div class="eih-kpi-value"><t t-esc="formatNumber(state.data.logs.success)"/></div>
+                                <div class="eih-kpi-foot"><strong><t t-esc="state.data.logs.success_rate"/>%</strong> success rate</div>
+                            </div>
+                        </button>
+                        <button class="eih-kpi-card eih-kpi-card--danger" t-on-click="() => this.openLogs('failure')">
+                            <div class="eih-kpi-icon"><i class="fa fa-times"/></div>
+                            <div class="eih-kpi-body">
+                                <div class="eih-kpi-label">Failed</div>
+                                <div class="eih-kpi-value"><t t-esc="formatNumber(state.data.logs.failure)"/></div>
+                                <div class="eih-kpi-foot">Requires attention in selected period</div>
+                            </div>
+                        </button>
+                        <button class="eih-kpi-card eih-kpi-card--warning" t-on-click="() => this.openLogs('warning')">
+                            <div class="eih-kpi-icon"><i class="fa fa-exclamation-triangle"/></div>
+                            <div class="eih-kpi-body">
+                                <div class="eih-kpi-label">Warnings</div>
+                                <div class="eih-kpi-value"><t t-esc="formatNumber(state.data.logs.warning)"/></div>
+                                <div class="eih-kpi-foot">Skipped or dependency events</div>
+                            </div>
+                        </button>
+                        <button class="eih-kpi-card eih-kpi-card--primary" t-on-click="() => this.openQueue('active')">
+                            <div class="eih-kpi-icon"><i class="fa fa-tasks"/></div>
+                            <div class="eih-kpi-body">
+                                <div class="eih-kpi-label">Active Queue</div>
+                                <div class="eih-kpi-value"><t t-esc="formatNumber(state.data.queue.active)"/></div>
+                                <div class="eih-kpi-foot">Oldest: <strong><t t-esc="queueAgeLabel(state.data.queue.oldest_active_age_minutes)"/></strong></div>
+                            </div>
+                        </button>
+                        <button class="eih-kpi-card" t-on-click="openBindings">
+                            <div class="eih-kpi-icon"><i class="fa fa-link"/></div>
+                            <div class="eih-kpi-body">
+                                <div class="eih-kpi-label">Remote Bindings</div>
+                                <div class="eih-kpi-value"><t t-esc="formatNumber(state.data.bindings.total)"/></div>
+                                <div class="eih-kpi-foot"><strong><t t-esc="formatNumber(state.data.bindings.synced)"/></strong> synchronized</div>
+                            </div>
+                        </button>
+                        <div class="eih-kpi-card">
+                            <div class="eih-kpi-icon"><i class="fa fa-clock-o"/></div>
+                            <div class="eih-kpi-body">
+                                <div class="eih-kpi-label">Avg. Response</div>
+                                <div class="eih-kpi-value"><t t-esc="formatNumber(state.data.logs.avg_duration_ms)"/><small> ms</small></div>
+                                <div class="eih-kpi-foot"><t t-esc="formatNumber(state.data.logs.total)"/> transactions in period</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="eih-dashboard-grid eih-dashboard-grid--main">
+                        <article class="eih-panel eih-panel--trend">
+                            <header class="eih-panel-header">
+                                <div>
+                                    <h3>Synchronization activity</h3>
+                                    <p>Daily transactions for the selected period</p>
+                                </div>
+                                <div class="eih-chart-legend">
+                                    <span><i class="eih-legend-dot eih-legend-dot--total"/> Total</span>
+                                    <span><i class="eih-legend-dot eih-legend-dot--success"/> Success</span>
+                                    <span><i class="eih-legend-dot eih-legend-dot--failure"/> Failed</span>
+                                </div>
+                            </header>
+                            <div class="eih-trend-chart" t-if="state.data.logs.trend.length">
+                                <svg viewBox="0 0 1000 250" preserveAspectRatio="none" role="img" aria-label="Synchronization activity chart">
+                                    <line x1="34" y1="216" x2="982" y2="216" class="eih-grid-line"/>
+                                    <line x1="34" y1="117" x2="982" y2="117" class="eih-grid-line"/>
+                                    <line x1="34" y1="18" x2="982" y2="18" class="eih-grid-line"/>
+                                    <polyline t-att-points="trendChart.total" class="eih-line eih-line--total"/>
+                                    <polyline t-att-points="trendChart.success" class="eih-line eih-line--success"/>
+                                    <polyline t-att-points="trendChart.failure" class="eih-line eih-line--failure"/>
+                                    <t t-foreach="trendChart.failurePoints" t-as="point" t-key="point.date">
+                                        <circle t-if="point.value" t-att-cx="point.x" t-att-cy="point.y" r="3.5" class="eih-point eih-point--failure">
+                                            <title><t t-esc="formatDay(point.date)"/>: <t t-esc="point.value"/> failed</title>
+                                        </circle>
+                                    </t>
+                                    <t t-foreach="trendChart.labels" t-as="point" t-key="point.date">
+                                        <text t-att-x="point.x" y="244" text-anchor="middle" class="eih-axis-label"><t t-esc="formatDay(point.date)"/></text>
+                                    </t>
+                                </svg>
+                            </div>
+                            <div class="eih-no-data" t-else=""><i class="fa fa-line-chart"/><span>No transactions in this period</span></div>
+                        </article>
+
+                        <article class="eih-panel eih-panel--status">
+                            <header class="eih-panel-header">
+                                <div><h3>Result quality</h3><p>Success, warning and failure mix</p></div>
+                            </header>
+                            <div class="eih-donut-wrap">
+                                <div class="eih-donut" t-att-style="statusDonutStyle">
+                                    <div class="eih-donut-center">
+                                        <strong><t t-esc="state.data.logs.success_rate"/>%</strong>
+                                        <span>success</span>
+                                    </div>
+                                </div>
+                                <div class="eih-status-list">
+                                    <button t-on-click="() => this.openLogs('success')"><span class="eih-dot bg-success"/>Success <strong><t t-esc="formatNumber(state.data.logs.success)"/></strong></button>
+                                    <button t-on-click="() => this.openLogs('warning')"><span class="eih-dot bg-warning"/>Warning <strong><t t-esc="formatNumber(state.data.logs.warning)"/></strong></button>
+                                    <button t-on-click="() => this.openLogs('failure')"><span class="eih-dot bg-danger"/>Failed <strong><t t-esc="formatNumber(state.data.logs.failure)"/></strong></button>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <section class="eih-dashboard-grid eih-dashboard-grid--secondary">
+                        <article class="eih-panel">
+                            <header class="eih-panel-header">
+                                <div><h3>Synchronization by type</h3><p>Volume and result distribution</p></div>
+                            </header>
+                            <div class="eih-type-bars">
+                                <button class="eih-type-row" t-foreach="state.data.logs.by_type" t-as="row" t-key="row.key" t-on-click="() => this.openLogs(false, row.key)">
+                                    <div class="eih-type-label"><span><t t-esc="row.label"/></span><strong><t t-esc="formatNumber(row.total)"/></strong></div>
+                                    <div class="eih-stacked-bar">
+                                        <span class="eih-segment eih-segment--success" t-att-style="barWidth(row.success, row.total)"/>
+                                        <span class="eih-segment eih-segment--warning" t-att-style="barWidth(row.warning, row.total)"/>
+                                        <span class="eih-segment eih-segment--failure" t-att-style="barWidth(row.failure, row.total)"/>
+                                    </div>
+                                    <div class="eih-type-detail"><span><t t-esc="row.success"/> success</span><span><t t-esc="row.failure"/> failed</span></div>
+                                </button>
+                            </div>
+                        </article>
+
+                        <article class="eih-panel">
+                            <header class="eih-panel-header">
+                                <div><h3>Current queue</h3><p>Live processing workload, independent of date filter</p></div>
+                                <button class="eih-link-button" t-on-click="() => this.openQueue()">Open queue <i class="fa fa-angle-right"/></button>
+                            </header>
+                            <div class="eih-queue-content">
+                                <div class="eih-donut eih-donut--small" t-att-style="queueDonutStyle">
+                                    <div class="eih-donut-center"><strong><t t-esc="formatNumber(state.data.queue.active)"/></strong><span>active</span></div>
+                                </div>
+                                <div class="eih-queue-states">
+                                    <button t-on-click="() => this.openQueue('pending')"><span class="eih-queue-color eih-queue-color--pending"/>Pending <strong><t t-esc="state.data.queue.pending"/></strong></button>
+                                    <button t-on-click="() => this.openQueue('processing')"><span class="eih-queue-color eih-queue-color--processing"/>Processing <strong><t t-esc="state.data.queue.processing"/></strong></button>
+                                    <button t-on-click="() => this.openQueue('retry')"><span class="eih-queue-color eih-queue-color--retry"/>Retry <strong><t t-esc="state.data.queue.retry"/></strong></button>
+                                    <button t-on-click="() => this.openQueue('failed')"><span class="eih-queue-color eih-queue-color--failed"/>Failed <strong><t t-esc="state.data.queue.failed"/></strong></button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="eih-panel">
+                            <header class="eih-panel-header"><div><h3>Published scope</h3><p>Records currently enabled for this instance</p></div></header>
+                            <div class="eih-publication-grid">
+                                <div><i class="fa fa-cube"/><strong><t t-esc="formatNumber(state.data.publications.products)"/></strong><span>Products</span></div>
+                                <div><i class="fa fa-cubes"/><strong><t t-esc="formatNumber(state.data.publications.variants)"/></strong><span>Variants</span></div>
+                                <div><i class="fa fa-folder-open-o"/><strong><t t-esc="formatNumber(state.data.publications.categories)"/></strong><span>Categories</span></div>
+                                <div><i class="fa fa-sliders"/><strong><t t-esc="formatNumber(state.data.publications.attributes)"/></strong><span>Attributes</span></div>
+                            </div>
+                        </article>
+                    </section>
+
+                    <section class="eih-dashboard-grid eih-dashboard-grid--details">
+                        <article class="eih-panel">
+                            <header class="eih-panel-header"><div><h3>Instance health</h3><p>Connection and automation configuration</p></div></header>
+                            <div class="eih-health-details">
+                                <div class="eih-detail-row"><span>Last success</span><strong><t t-esc="formatDate(state.data.instance.last_success_at)"/></strong></div>
+                                <div class="eih-detail-row"><span>Last failure</span><strong><t t-esc="formatDate(state.data.instance.last_failure_at)"/></strong></div>
+                                <div class="eih-detail-row"><span>Request timeout</span><strong><t t-esc="state.data.instance.timeout_seconds"/> sec</strong></div>
+                                <div class="eih-detail-row"><span>Max attempts</span><strong><t t-esc="state.data.instance.max_attempts"/></strong></div>
+                                <div class="eih-auto-sync-row">
+                                    <span t-att-class="state.data.instance.auto_sync_category ? 'is-on' : 'is-off'">Category</span>
+                                    <span t-att-class="state.data.instance.auto_sync_product ? 'is-on' : 'is-off'">Product</span>
+                                    <span t-att-class="state.data.instance.auto_sync_stock ? 'is-on' : 'is-off'">Stock</span>
+                                    <span t-att-class="state.data.instance.inbound_orders_enabled ? 'is-on' : 'is-off'">Inbound Orders</span>
+                                </div>
+                                <div class="eih-last-error" t-if="state.data.instance.last_failure_message">
+                                    <i class="fa fa-exclamation-circle"/><div><span>Last failure message</span><p><t t-esc="state.data.instance.last_failure_message"/></p></div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="eih-panel">
+                            <header class="eih-panel-header"><div><h3>Top errors</h3><p>Most frequent failures in selected period</p></div></header>
+                            <div class="eih-error-list" t-if="state.data.logs.top_errors.length">
+                                <div class="eih-error-row" t-foreach="state.data.logs.top_errors" t-as="error" t-key="error.message">
+                                    <span class="eih-error-count"><t t-esc="error.count"/>×</span>
+                                    <span class="eih-error-message"><t t-esc="error.message"/></span>
+                                </div>
+                            </div>
+                            <div class="eih-no-data eih-no-data--compact" t-else=""><i class="fa fa-check-circle"/><span>No failures in this period</span></div>
+                        </article>
+
+                        <article class="eih-panel">
+                            <header class="eih-panel-header"><div><h3>HTTP responses</h3><p>Response status distribution</p></div></header>
+                            <div class="eih-http-list" t-if="state.data.logs.http_statuses.length">
+                                <div class="eih-http-row" t-foreach="state.data.logs.http_statuses" t-as="http" t-key="http.code">
+                                    <span t-att-class="'eih-http-code eih-http-code--' + (http.code &gt;= 200 &amp;&amp; http.code &lt; 300 ? 'ok' : (http.code &gt;= 500 ? 'danger' : 'warn'))"><t t-esc="http.code"/></span>
+                                    <div class="eih-http-bar"><span t-att-style="barWidth(http.count, state.data.logs.total)"/></div>
+                                    <strong><t t-esc="http.count"/></strong>
+                                </div>
+                            </div>
+                            <div class="eih-no-data eih-no-data--compact" t-else=""><i class="fa fa-code"/><span>No HTTP responses recorded</span></div>
+                        </article>
+                    </section>
+
+                    <section class="eih-panel eih-panel--table">
+                        <header class="eih-panel-header">
+                            <div><h3>Recent transactions</h3><p>Latest synchronization activity inside the selected period</p></div>
+                            <button class="eih-link-button" t-on-click="() => this.openLogs()">View all logs <i class="fa fa-angle-right"/></button>
+                        </header>
+                        <div class="table-responsive" t-if="state.data.recent.length">
+                            <table class="table eih-transactions-table">
+                                <thead><tr><th>Time</th><th>Type</th><th>Result</th><th>Summary</th><th>HTTP</th><th>Duration</th><th>Attempt</th><th/></tr></thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.recent" t-as="log" t-key="log.id">
+                                        <td class="text-nowrap"><t t-esc="formatDate(log.create_date)"/></td>
+                                        <td><span class="eih-type-pill"><t t-esc="log.sync_type_label"/></span></td>
+                                        <td><span t-att-class="statusClass(log.status)"><t t-esc="log.status"/></span></td>
+                                        <td class="eih-summary-cell"><t t-esc="log.summary"/><div class="eih-row-error" t-if="log.error_message"><t t-esc="log.error_message"/></div></td>
+                                        <td><t t-esc="log.http_status || '—'"/></td>
+                                        <td class="text-nowrap"><t t-esc="log.duration_ms"/> ms</td>
+                                        <td><t t-esc="log.attempt"/></td>
+                                        <td><button class="btn btn-sm btn-link" t-on-click="() => this.openLog(log.id)" title="Open transaction"><i class="fa fa-external-link"/></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="eih-no-data" t-else=""><i class="fa fa-inbox"/><span>No synchronization logs in this period</span></div>
+                    </section>
+
+                    <footer class="eih-dashboard-footer">
+                        <span>Period: <strong><t t-esc="state.data.period.date_from"/> → <t t-esc="state.data.period.date_to"/></strong></span>
+                        <span>Last refreshed: <strong><t t-esc="formatDate(state.data.generated_at)"/></strong></span>
+                    </footer>
+                </main>
+            </t>
+        </div>
+    </t>
+</templates>

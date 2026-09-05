@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_ecommerce_integration" model="ir.ui.view">
+        <field name="name">sale.order.form.ecommerce.integration</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="ecommerce_integration_instance_id" options="{'no_create': True}" groups="ecommerce_integration_hub.group_ecommerce_connector_user"/>
+                <field name="ecommerce_external_order_number" readonly="1" invisible="not ecommerce_integration_instance_id" groups="ecommerce_integration_hub.group_ecommerce_connector_user"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Ecommerce Store" invisible="not ecommerce_integration_instance_id" groups="ecommerce_integration_hub.group_ecommerce_connector_user">
+                    <group>
+                        <group string="External Order">
+                            <field name="ecommerce_integration_instance_id" readonly="1"/>
+                            <field name="ecommerce_external_order_id" readonly="1"/>
+                            <field name="ecommerce_external_order_number" readonly="1"/>
+                            <field name="ecommerce_last_event_id" readonly="1"/>
+                            <field name="ecommerce_last_status_at" readonly="1"/>
+                        </group>
+                        <group string="Store Status">
+                            <field name="ecommerce_store_status" readonly="1"/>
+                            <field name="ecommerce_payment_status" readonly="1"/>
+                            <field name="ecommerce_fulfillment_status" readonly="1"/>
+                            <field name="ecommerce_payment_method" readonly="1"/>
+                            <field name="ecommerce_is_cod" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Return Information">
+                        <field name="ecommerce_return_status" readonly="1"/>
+                        <field name="ecommerce_return_reason" readonly="1"/>
+                        <field name="ecommerce_return_sellable" readonly="1"/>
+                    </group>
+                    <field name="ecommerce_raw_status_json" readonly="1" widget="text"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
